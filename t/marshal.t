@@ -14,6 +14,8 @@ use ok 'JSON::RPC::Common::Marshal::Text';
 {
 	my $m_json = JSON::RPC::Common::Marshal::Text->new;
 
+	isa_ok( $m_json, "JSON::RPC::Common::Marshal::Text" );
+
 	my $call = $m_json->json_to_call(<<JSON);
 {	"jsonrpc": "2.0"
 ,	"method":  "oink"
