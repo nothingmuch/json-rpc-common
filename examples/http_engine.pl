@@ -3,23 +3,15 @@
 use strict;
 use warnings;
 
-use HTTP::Engine;
+use HTTPEx::Declare;
 
 use JSON::RPC::Common::Marshal::HTTP;
 
-my $engine = HTTP::Engine->new(
-	interface => {
-		module => "Standalone",
-		args => {
-			port => 8000,
-		},
-		request_handler => \&json_rpc,
-	},
-);
+interface Standalone => { port => 8000 };
 
 my $marshal = JSON::RPC::Common::Marshal::HTTP->new;
 
-sub json_rpc {
+run {
 	my $c = shift;
 
 	# decode the request into an object
@@ -45,6 +37,5 @@ sub json_rpc {
 	# and write it back to the HTTP client
 	$c->res->content_type("application/json");
 	$c->res->body($json_res_text);
-}
+};
 
-$engine->run;
