@@ -68,7 +68,7 @@ has id => (
 has params => (
 	isa => "Ref",
 	is  => "ro",
-	predicate => "has_params",
+	required => 1,
 );
 
 sub is_service { 0 }
