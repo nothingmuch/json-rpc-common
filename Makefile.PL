@@ -12,6 +12,8 @@ WriteMakefile(
 	PL_FILES     => { },
 	PREREQ_PM    => {
 		'Test::use::ok' => 0,
+		'Moose' => '0.48',
+		'namespace::clean' => '0.08',
 	},
 );
 
