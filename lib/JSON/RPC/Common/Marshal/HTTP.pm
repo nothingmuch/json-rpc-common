@@ -29,6 +29,12 @@ has expander => (
 	handles => [qw(expand_hash)],
 );
 
+has content_type => (
+	isa => "Str",
+	is  => "rw",
+	default => "application/json",
+);
+
 sub _build_expander {
 	require CGI::Expand;
 	return "CGI::Expand";
@@ -104,6 +110,49 @@ sub process_query_params {
 sub request_to_call_post {
 	my ( $self, $request ) = @_;
 	$self->json_to_call( $request->content );
+}
+
+sub write_result_to_response {
+	my ( $self, $result, $response, @args ) = @_;
+
+	my %args = $self->result_to_response_params($result);
+
+	foreach my $key ( keys %args ) {
+		if ( $response->can($key) ) {
+			$response->$key(delete $args{$key});
+		}
+	}
+
+	croak "BAH" if keys %args;
+
+	return 1;
+}
+
+sub result_to_response {
+	my ( $self, $result ) = @_;
+
+	$self->create_http_response( $self->result_to_response_params($result) );
+}
+
+sub create_http_response {
+	my ( $self, %args ) = @_;
+
+	HTTP::Response->new(
+		$args{status},
+		undef,
+		{ "Content-Type" => $args{content_type} },
+		$args{body},
+	);
+}
+
+sub result_to_response_params {
+	my ( $self, $result ) = @_;
+
+	return (
+		status       => ( $result->has_error ? $result->error->http_status : 200 ),
+		content_type => $self->content_type, # FIXME json-rpc for 1.1-alt and 2.0?
+		body         => $self->encode($result->deflate),
+	);
 }
 
 __PACKAGE__->meta->make_immutable();
