@@ -35,3 +35,18 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 		is_deeply( $call->params, { oink => [ 3, 2 ], bar => "elk" }, "params" );
 	}
 }
+
+SKIP: {
+	plan skip "CGI::Expand is required", 2 unless eval { require CGI::Expand };
+
+	my $m_http = JSON::RPC::Common::Marshal::HTTP->new( expand => 1 );
+
+	my $req = HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&oink.1=3&oink.0=2&bar.foo=elk' );
+
+	my $call = $m_http->request_to_call( $req );
+
+	isa_ok( $call, "JSON::RPC::Common::Procedure::Call" );
+
+	# note "oink" params are reversed
+	is_deeply( $call->params, { oink => [ 2, 3 ], bar => { foo => "elk" } }, "expanded params" );
+}
