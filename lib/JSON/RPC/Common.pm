@@ -62,8 +62,8 @@ Anyway, enough bitching.
 There are various classes provided by L<JSON::RPC::Common>.
 
 They are designed for high high reusability. All the classes are transport and
-representation agnostic except for L<JSON::RPC::Common::Serializer> and
-L<JSON::RPC::Common::Serializer::HTTP> which are completely optional.
+representation agnostic except for L<JSON::RPC::Common::Marshal::Text> and
+L<JSON::RPC::Common::Marshal::HTTP> which are completely optional.
 
 =head2 L<JSON::RPC::Common::Procedure::Call>
 
