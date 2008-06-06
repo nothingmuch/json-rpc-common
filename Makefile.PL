@@ -5,8 +5,8 @@ use strict;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-	NAME         => '',
-	VERSION_FROM => '',
+	NAME         => 'JSON::RPC::Common',
+	VERSION_FROM => 'lib/JSON/RPC/Common.pm',
 	INSTALLDIRS  => 'site',
 	SIGN         => 1,
 	PL_FILES     => { },
