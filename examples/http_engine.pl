@@ -30,12 +30,8 @@ run {
 	# to invoke the request as a method of some object:
 	# my $json_rpc_res = $json_rpc_req->call( $some_object );
 
-	# serialize the response
-	my $json_res_data = $json_rpc_res->deflate;
-	my $json_res_text = $marshal->encode($json_res_data);
+	# and write the result back to the HTTP client
 
-	# and write it back to the HTTP client
-	$c->res->content_type("application/json");
-	$c->res->body($json_res_text);
+	$marshal->write_result_to_response($json_rpc_res, $c->res);
 };
 
