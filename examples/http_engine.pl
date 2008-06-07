@@ -7,7 +7,7 @@ use HTTPEx::Declare;
 
 use JSON::RPC::Common::Marshal::HTTP;
 
-interface Standalone => { port => 8000 };
+interface Standalone => { port => 8000, keepalive => 1 };
 
 my $marshal = JSON::RPC::Common::Marshal::HTTP->new;
 
