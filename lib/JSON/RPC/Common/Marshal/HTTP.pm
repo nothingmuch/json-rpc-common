@@ -92,7 +92,7 @@ sub request_to_call_get_query {
 	}
 
 	croak "JSON-RPC 1.0 is not supported on HTTP GET"
-		unless ( ( $rpc{jsonrpc} || $rpc{version} ) >= 1.1 );
+		unless ( ( $rpc{jsonrpc} || $rpc{version} || 0 ) >= 1.1 );
 
 	# increases usefulness
 	$rpc{params} = $self->process_query_params($params, $request, @args);
