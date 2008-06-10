@@ -3,6 +3,8 @@
 package JSON::RPC::Common::Procedure::Call::Version_1_1;
 use Moose;
 
+use JSON::RPC::Common::TypeConstraints qw(JSONContainer);
+
 use JSON::RPC::Common::Procedure::Return::Version_1_1;
 
 use Carp qw(croak);
@@ -44,7 +46,7 @@ has '+version' => (
 );
 
 has '+params' => (
-	isa => "ArrayRef|HashRef",
+	isa => JSONContainer,
 );
 
 has '+result_response_class' => (
