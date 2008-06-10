@@ -5,9 +5,10 @@ use Moose;
 
 use Carp qw(croak);
 
-use namespace::clean -except => [qw(meta)];
+use JSON::RPC::Common::TypeConstraints qw(JSONValue);
+use JSON::RPC::Common::Procedure::Return::Error;
 
-use JSON::RPC::Common::Procedure::Return::Error ();
+use namespace::clean -except => [qw(meta)];
 
 has result => (
 	isa => "Any",
@@ -16,7 +17,7 @@ has result => (
 );
 
 has id => (
-	isa => "Undef|Value|ArrayRef|HashRef",
+	isa => JSONValue,
 	is  => "ro",
 	predicate => "has_id",
 );
