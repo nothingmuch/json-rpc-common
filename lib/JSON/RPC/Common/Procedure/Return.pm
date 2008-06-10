@@ -3,6 +3,8 @@
 package JSON::RPC::Common::Procedure::Return;
 use Moose;
 
+use Carp qw(croak);
+
 use namespace::clean -except => [qw(meta)];
 
 has result => (
@@ -22,7 +24,13 @@ has error => (
 	predicate => "has_error",
 );
 
-sub deflate { die "abstract" }
+sub deflate {
+	my $self = shift;
+
+	my $version = $self->version;
+
+	croak "Deflating a procedure return of the class " . ref($self) . " is not supported (version is " . ( defined $version ? $version : "undefined" ) . ")";
+}
 
 __PACKAGE__->meta->make_immutable;
 
