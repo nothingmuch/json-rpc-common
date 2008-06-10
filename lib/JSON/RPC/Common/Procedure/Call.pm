@@ -100,7 +100,7 @@ sub call {
 
 	local $@;
 
-	my @res = eval { $invocant->$method( $self->param_list, @args ) };
+	my @res = eval { $invocant->$method( $self->params_list, @args ) };
 
 	if ($@) {
 		$self->return_error(message => $@);
