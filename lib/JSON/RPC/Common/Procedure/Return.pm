@@ -7,6 +7,8 @@ use Carp qw(croak);
 
 use namespace::clean -except => [qw(meta)];
 
+use JSON::RPC::Common::Procedure::Return::Error ();
+
 has result => (
 	isa => "Any",
 	is  => "ro",
@@ -19,7 +21,7 @@ has id => (
 );
 
 has error => (
-	isa => "Undef|HashRef",
+	isa => "JSON::RPC::Common::Procedure::Return::Error",
 	is  => "ro",
 	predicate => "has_error",
 );

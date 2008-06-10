@@ -8,8 +8,6 @@ use Carp qw(croak);
 use namespace::clean -except => [qw(meta)];
 
 use JSON::RPC::Common::Procedure::Return ();
-#use JSON::RPC::Common::Procedure::Return::Error ();
-{ package JSON::RPC::Common::Procedure::Return::Error; use Moose };
 
 sub inflate {
 	my ( $class, @args ) = @_;
