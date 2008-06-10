@@ -5,10 +5,7 @@ use Moose;
 
 use namespace::clean -except => [qw(meta)];
 
-{
-	package JSON::RPC::Common::Procedure::Return::Version_1_1::Error;
-	use Moose;
-}
+use JSON::RPC::Common::Procedure::Return::Version_1_1::Error ();
 
 extends qw(JSON::RPC::Common::Procedure::Return);
 
