@@ -15,6 +15,11 @@ sub new {
 	$self->SUPER::new(%data);
 }
 
+has '+version' => (
+	# default => "2.0", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
+	default => sub { "2.0" },
+);
+
 has '+params' => (
 	isa => "ArrayRef|HashRef",
 );

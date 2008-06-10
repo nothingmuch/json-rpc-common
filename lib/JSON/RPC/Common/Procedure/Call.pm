@@ -71,7 +71,7 @@ has error_response_class => (
 has version => (
 	isa => "Str",
 	is  => "ro",
-	required => 1,
+	predicate => "has_version",
 );
 
 has method => (
