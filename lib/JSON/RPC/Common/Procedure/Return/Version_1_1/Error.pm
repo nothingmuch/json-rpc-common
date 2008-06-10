@@ -7,6 +7,15 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Procedure::Return::Error);
 
+has '+code' => (
+	required => 1,
+);
+
+has error => (
+	isa => "Any",
+	is  => "rw",
+);
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
