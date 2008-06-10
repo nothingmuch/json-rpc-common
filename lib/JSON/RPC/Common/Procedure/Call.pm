@@ -7,6 +7,10 @@ use Carp qw(croak);
 
 use namespace::clean -except => [qw(meta)];
 
+use JSON::RPC::Common::Procedure::Return ();
+#use JSON::RPC::Common::Procedure::Return::Error ();
+{ package JSON::RPC::Common::Procedure::Return::Error; use Moose };
+
 sub inflate {
 	my ( $class, @args ) = @_;
 
@@ -52,10 +56,16 @@ sub _get_version {
 	}
 }
 
-has [ qw(result_response_class error_response_class) ] => (
+has result_response_class => (
 	isa => "ClassName",
 	is  => "rw",
-	required => 1,
+	default => "JSON::RPC::Common::Procedure::Return",
+);
+
+has error_response_class => (
+	isa => "ClassName",
+	is  => "rw",
+	default => "JSON::RPC::Common::Procedure::Return::Error",
 );
 
 has version => (
