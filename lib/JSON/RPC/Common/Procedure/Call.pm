@@ -3,11 +3,12 @@
 package JSON::RPC::Common::Procedure::Call;
 use Moose;
 
+use JSON::RPC::Common::TypeConstraints qw(JSONValue);
+use JSON::RPC::Common::Procedure::Return;
+
 use Carp qw(croak);
 
 use namespace::clean -except => [qw(meta)];
-
-use JSON::RPC::Common::Procedure::Return ();
 
 sub inflate {
 	my ( $class, @args ) = @_;
@@ -79,7 +80,7 @@ has method => (
 );
 
 has id => (
-	isa => "Undef|Value|ArrayRef|HashRef",
+	isa => JSONValue,
 	is  => "ro",
 	predicate => "has_id",
 );
