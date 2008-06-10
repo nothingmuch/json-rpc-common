@@ -8,9 +8,20 @@ use Carp qw(croak);
 use namespace::clean -except => [qw(meta)];
 
 sub inflate {
-	my ( $class, $data ) = @_;
+	my ( $class, @args ) = @_;
 
-	croak "Inflate takes a hash reference" unless ref $data eq 'HASH';
+	my $data;
+	if (@args == 1) {
+		if (defined $args[0]) {
+			no warnings 'uninitialized';
+			(ref($args[0]) eq 'HASH')
+			|| confess "Single parameters to new() must be a HASH ref";
+			$data = $args[0];
+		}
+	}
+	else {
+		$data = { @args };
+	}
 
 	my $subclass = $class->_version_class($data);
 	
