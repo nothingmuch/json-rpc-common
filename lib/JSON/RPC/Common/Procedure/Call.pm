@@ -211,11 +211,19 @@ These vary per subclass.
 A factory constructor. Delegates to C<new> on a subclass based on the protocol
 version.
 
+This is the reccomended constructor.
+
 =item new
 
 The actual constructor.
 
-Not intended for use on this class, use a subclass instead.
+Not intended for normal use on this class, you should use a subclass most of
+the time.
+
+Calling C<< JSON::RPC::Common::Procedure::Call->new >> will construct a call
+with an undefined version, which cannot be deflated (and thus sent over the
+wire). This is still useful for testing your own code's RPC hanlding, so this
+is not allowed.
 
 =item params_list
 
