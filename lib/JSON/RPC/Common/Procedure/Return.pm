@@ -12,6 +12,7 @@ use JSON::RPC::Common::Procedure::Return::Error ();
 has result => (
 	isa => "Any",
 	is  => "ro",
+	predicate => "has_result",
 );
 
 has id => (
