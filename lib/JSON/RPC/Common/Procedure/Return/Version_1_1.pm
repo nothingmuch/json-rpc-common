@@ -3,9 +3,9 @@
 package JSON::RPC::Common::Procedure::Return::Version_1_1;
 use Moose;
 
-use namespace::clean -except => [qw(meta)];
+use JSON::RPC::Common::Procedure::Return::Version_1_1::Error;
 
-use JSON::RPC::Common::Procedure::Return::Version_1_1::Error ();
+use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Procedure::Return);
 
