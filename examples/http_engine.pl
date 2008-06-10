@@ -7,7 +7,7 @@ use HTTPEx::Declare;
 
 use JSON::RPC::Common::Marshal::HTTP;
 
-interface Standalone => { port => 8000, keepalive => 1 };
+interface Standalone => { port => 8000, fork => 1, keepalive => 1 };
 
 my $marshal = JSON::RPC::Common::Marshal::HTTP->new;
 
@@ -27,8 +27,6 @@ run {
 				method  => $json_rpc_req->method,
 			},
 		});
-
-		warn "dancing";
 
 		# to invoke the request as a method of some object:
 		# my $json_rpc_res = $json_rpc_req->call( $some_object );
