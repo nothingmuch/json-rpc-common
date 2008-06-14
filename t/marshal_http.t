@@ -73,7 +73,7 @@ SKIP: {
 
 	my $m_http = JSON::RPC::Common::Marshal::HTTP->new( expand => 1 );
 
-	my $req = HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&oink.1=3&oink.0=2&bar.foo=elk' );
+	my $req = HTTP::Request->new( GET => '/rpc?version=1.1&method=foo&id=4&oink.1=3&oink.0=2&bar.foo=elk' );
 
 	my $call = $m_http->request_to_call( $req );
 
