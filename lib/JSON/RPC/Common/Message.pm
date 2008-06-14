@@ -25,8 +25,10 @@ sub inflate {
 
 	Class::MOP::load_class($subclass);
 
-	$subclass->new(%$data);
+	$subclass->new_from_data(%$data);
 }
+
+sub new_from_data { shift->new(@_) }
 
 sub _get_version {
 	my ( $class, $data ) = @_;
