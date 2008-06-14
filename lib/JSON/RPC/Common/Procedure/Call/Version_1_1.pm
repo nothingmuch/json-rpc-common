@@ -13,7 +13,8 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Procedure::Call);
 
-sub new {
+around new => sub {
+	my $next = shift;
 	my ( $self, @args ) = @_;
 
 	my %data;
@@ -39,8 +40,8 @@ sub new {
 		$data{alt_spec} = 1 unless exists $data{alt_spec};
 	}
 
-	$self->SUPER::new(%data);
-}
+	$self->$next(%data);
+};
 
 has '+version' => (
 	# default => "1.1", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
@@ -49,6 +50,7 @@ has '+version' => (
 
 has alt_spec => (
 	isa => "Bool",
+	is  => "rw",
 	default => 0,
 );
 

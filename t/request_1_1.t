@@ -75,3 +75,20 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 
 	ok( !$req_obj->is_notification, "no id is still not a notification" );
 }
+
+{
+	my $req_data = {
+		version => "1.1",
+		method  => "hello",
+		kwparams  => { foo => "bar" },
+	};
+
+	my $req_obj = JSON::RPC::Common::Procedure::Call->inflate($req_data);
+
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call" );
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call::Version_1_1" );
+
+	is( $req_obj->version, "1.1", "version" );
+
+	ok( $req_obj->alt_spec, "alt 1.1 detected" );
+}
