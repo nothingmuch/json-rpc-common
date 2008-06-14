@@ -45,6 +45,9 @@ has code => (
 	predicate => "has_message",
 );
 
+# FIXME delegate to a dictionary
+sub http_status { 500 }
+
 __PACKAGE__->meta->make_immutable();
 
 __PACKAGE__
