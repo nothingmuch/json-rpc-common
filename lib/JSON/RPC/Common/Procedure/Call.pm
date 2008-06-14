@@ -133,7 +133,7 @@ sub return_error {
 	my ( $self, @args ) = @_;
 
 	$self->result_response_class->new(
-		error => $self->error_response_class->new(@args),
+		error => $self->error_response_class->inflate_args(@args),
 		( $self->has_id ? ( id => $self->id ) : () ),
 	);
 }
