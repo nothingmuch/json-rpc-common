@@ -41,6 +41,12 @@ has id => (
 	predicate => "has_id",
 );
 
+has error_response_class => (
+	isa => "ClassName",
+	is  => "rw",
+	default => "JSON::RPC::Common::Procedure::Return::Error",
+);
+
 has error => (
 	isa => "JSON::RPC::Common::Procedure::Return::Error",
 	is  => "rw",
@@ -65,6 +71,27 @@ sub deflate_error {
 	} else {
 		return undef;
 	}
+}
+
+sub inflate_error {
+	my ( $self, $error ) = @_;
+
+	my $error_class = ref $self
+		? $self->error_class
+		: $self->meta->find_attribute_by_name("error_response_class")->default;
+
+	$error_class->inflate(%$error);
+}
+
+sub set_error {
+	my ( $self, @args ) = @_;
+
+	$self->error( $self->create_error(@args) );
+}
+
+sub create_error {
+	my ( $self, @args ) = @_;
+	$self->error_response_class->new_dwim(@args);
 }
 
 __PACKAGE__->meta->make_immutable;

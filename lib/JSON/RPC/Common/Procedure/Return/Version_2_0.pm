@@ -9,6 +9,16 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Procedure::Return);
 
+has '+version' => (
+	# default => "2.0", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
+	default => sub { "2.0" },
+	# init_arg => "jsonrpc", # illegal inherit arg. bah. it's meaningless, so we don't care
+);
+
+has '+error_response_class' => (
+	default => "JSON::RPC::Common::Procedure::Return::Version_2_0::Error",
+);
+
 sub deflate {
 	my $self = shift;
 
