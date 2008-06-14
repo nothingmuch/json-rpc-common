@@ -41,8 +41,10 @@ that level are implemented with the same class.
 =head1 RANT
 
 While JSON-RPC 1.0 and JSON-RPC 2.0 are beautifully simple, the JSON-RPC 1.1
-working draft, definitely not. It is much more complex as a protocol, and also
-demands a lot more complexity from the responders on the server side.
+working draft, is most definitely not. It is a convoluted protocol, and also
+demands a lot more complexity from the responders on the server side (server
+side introspection (C<system.describe>), strange things relating to positional
+vs. named params...).
 
 Unfortunately it appears that JSON-RPC 1.1 is the most popular variant.
 
@@ -51,11 +53,8 @@ public APIs I reccomend that all versions be supported, but be aware that a
 1.1-WD server "MUST" implement service description in order to be in
 compliance.
 
-If you control the client I see absolutely no reason for this, and encourage
-you to adhere to 1.0, 1.1-alt or 2.0 instead. It would be much nicer if they
-were the de facto standard.
-
-Anyway, enough bitching.
+Anyway, enough bitching. I suggest making your servers 1.0+2.0, and your
+clients 2.0.
 
 =head1 CLASSES
 
