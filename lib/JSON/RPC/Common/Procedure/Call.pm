@@ -129,7 +129,8 @@ sub return_error {
 	my ( $self, @args ) = @_;
 
 	$self->result_response_class->new(
-		error => $self->error_response_class->inflate_args(@args),
+		error_response_class => $self->error_response_class,
+		error => $self->error_response_class->new_dwim(@args),
 		( $self->has_id ? ( id => $self->id ) : () ),
 	);
 }

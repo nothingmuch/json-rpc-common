@@ -7,22 +7,40 @@ use JSON::RPC::Common::TypeConstraints qw(JSONValue);
 
 use namespace::clean -except => [qw(meta)];
 
-sub inflate_args {
+sub new_dwim {
 	my ( $class, @args ) = @_;
 
-	if ( @args % 2 == 1 ) {
-		unshift @args, "message";
+	if ( @args == 1 ) {
+		if ( blessed($args[0]) and $args[0]->isa($class) ) {
+			return $args[0];
+		}
 	}
 
-	my %args = @args;
+	$class->inflate(@args);
+}
+
+sub inflate {
+	my ( $class, @args ) = @_;
+
+	my $data;
+	if (@args == 1) {
+		if (defined $args[0] and (ref($args[0])||'') eq 'HASH') {
+			$data = { %{ $args[0] } };
+		}
+	} else {
+		if ( @args % 2 == 1 ) {
+			unshift @args, "message";
+		}
+		$data = { @args };
+	}
 
 	my %constructor_args;
 
 	foreach my $arg ( qw(message code) ) {
-		$constructor_args{$arg} = delete $args{$arg} if exists $args{$arg};
+		$constructor_args{$arg} = delete $data->{$arg} if exists $data->{$arg};
 	}
 
-	$constructor_args{data} = \%args;
+	$constructor_args{data} = (join(" ", keys %$data) eq 'data' ? $data->{data} : $data);
 
 	$class->new(%constructor_args);
 }
