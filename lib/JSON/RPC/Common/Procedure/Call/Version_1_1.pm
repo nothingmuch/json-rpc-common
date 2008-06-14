@@ -18,16 +18,16 @@ sub new {
 
 	my %data;
 	if (@args == 1) {
-        if (defined $args[0]) {
+		if (defined $args[0]) {
 			no warnings 'uninitialized';
-            (ref($args[0]) eq 'HASH')
-                || confess "Single parameters to new() must be a HASH ref";
-            %data = %{$args[0]};
-        }
-    }
-    else {
-        %data = @args;
-    }
+			(ref($args[0]) eq 'HASH')
+			|| confess "Single parameters to new() must be a HASH ref";
+			%data = %{$args[0]};
+		}
+	}
+	else {
+		%data = @args;
+	}
 
 	if ( exists $data{kwparams} ) {
 		if ( exists $data{params} ) {
