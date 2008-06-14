@@ -5,7 +5,9 @@ package JSON::RPC::Common::TypeConstraints;
 use strict;
 use warnings;
 
-use MooseX::Types -declare => [qw(JSONValue JSONContainer)];
+use MooseX::Types -declare => [qw(JSONDefined JSONValue JSONContainer)];
+
+subtype JSONDefined, as "Value|ArrayRef|HashRef";
 
 subtype JSONValue, as 'Undef|Value|ArrayRef|HashRef';
 
