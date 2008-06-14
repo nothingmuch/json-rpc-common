@@ -38,6 +38,16 @@ sub deflate {
 	croak "Deflating a procedure return of the class " . ref($self) . " is not supported (version is $version)";
 }
 
+sub deflate_error {
+	my $self = shift;
+
+	if ( my $error = $self->error ) {
+		return $error->deflate;
+	} else {
+		return undef;
+	}
+}
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__

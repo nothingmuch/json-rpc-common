@@ -14,7 +14,7 @@ sub deflate {
 
 	return {
 		result => ( $self->error ? undef : $self->result ),
-		error  => $self->error, # can be null
+		error  => $self->deflate_error, # can be null
 		id => $self->id, # can be null
 	};
 }

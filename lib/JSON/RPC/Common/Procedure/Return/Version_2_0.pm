@@ -15,7 +15,7 @@ sub deflate {
 	return {
 		jsonrpc => "2.0",
 		( $self->has_error
-			? ( error => $self->error )
+			? ( error => $self->deflate_error )
 			: ( result  => $self->result ) ),
 		( $self->has_id ? ( id => $self->id ) : () ),
 	};
