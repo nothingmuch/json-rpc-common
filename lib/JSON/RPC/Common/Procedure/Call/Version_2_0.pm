@@ -10,12 +10,6 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Procedure::Call);
 
-sub new {
-	my ( $self, %data ) = @_;
-	$data{version} = delete $data{jsonrpc};
-	$self->SUPER::new(%data);
-}
-
 has '+version' => (
 	# default => "2.0", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
 	default => sub { "2.0" },
