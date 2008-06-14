@@ -13,6 +13,7 @@ extends qw(JSON::RPC::Common::Procedure::Call);
 has '+version' => (
 	# default => "2.0", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
 	default => sub { "2.0" },
+	# init_arg => "jsonrpc", # illegal inherit arg. bah. it's meaningless, so we don't care
 );
 
 has '+params' => (
