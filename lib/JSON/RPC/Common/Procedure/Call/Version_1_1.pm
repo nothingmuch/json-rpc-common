@@ -35,6 +35,8 @@ sub new {
 		} else {
 			$data{params} = delete $data{kwparams};
 		}
+
+		$data{alt_spec} = 1 unless exists $data{alt_spec};
 	}
 
 	$self->SUPER::new(%data);
@@ -43,6 +45,11 @@ sub new {
 has '+version' => (
 	# default => "1.1", # broken, Moose::Meta::Method::Accessor gens numbers if looks_like_number
 	default => sub { "1.1" },
+);
+
+has alt_spec => (
+	isa => "Bool",
+	default => 0,
 );
 
 has '+params' => (
