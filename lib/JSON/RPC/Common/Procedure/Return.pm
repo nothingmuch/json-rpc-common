@@ -14,19 +14,19 @@ with qw(JSON::RPC::Common::Message);
 
 has result => (
 	isa => "Any",
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_result",
 );
 
 has id => (
 	isa => JSONValue,
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_id",
 );
 
 has error => (
 	isa => "JSON::RPC::Common::Procedure::Return::Error",
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_error",
 );
 

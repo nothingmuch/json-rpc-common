@@ -26,25 +26,25 @@ has error_response_class => (
 
 has version => (
 	isa => "Str",
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_version",
 );
 
 has method => (
 	isa => "Str",
-	is  => "ro",
+	is  => "rw",
 	required => 1,
 );
 
 has id => (
 	isa => JSONValue,
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_id",
 );
 
 has params => (
 	isa => "Ref",
-	is  => "ro",
+	is  => "rw",
 	predicate => "has_params",
 );
 
