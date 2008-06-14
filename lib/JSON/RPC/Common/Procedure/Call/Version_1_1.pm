@@ -77,6 +77,28 @@ sub is_service {
 	$self->method =~ /^system\./;
 }
 
+sub deflate_version {
+	my $self = shift;
+	return ( version => $self->version ) ;
+}
+
+sub deflate_params {
+	my $self = shift;
+
+	if ( $self->has_params ) {
+		my $params = $self->params;
+
+		# JSON-RPC 1.1 alt specifies that named params go in kwparams. YUCK!
+		if ( ref($params) eq 'HASH' and $self->alt_spec ) {
+			return ( kwparams => $params );
+		}
+
+		return ( params => $params );
+	} else {
+		return ();
+	}
+}
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__

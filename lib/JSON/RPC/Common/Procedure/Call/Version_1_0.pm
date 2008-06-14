@@ -36,6 +36,16 @@ sub is_notification {
 	return not defined $self->id;
 }
 
+sub deflate_params {
+	my $self = shift;
+	return ( params => $self->params );
+}
+
+sub deflate_id {
+	my $self = shift;
+	return ( id => $self->id ); # never omitted, can be null instead
+}
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__

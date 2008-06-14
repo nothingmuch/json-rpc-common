@@ -28,6 +28,11 @@ has '+error_response_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_2_0::Error",
 );
 
+sub deflate_version {
+	my $self = shift;
+	return ( jsonrpc => $self->version );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__

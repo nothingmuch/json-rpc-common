@@ -17,6 +17,8 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 
 	my $req_obj = JSON::RPC::Common::Procedure::Call->inflate($req_data);
 
+	is_deeply( $req_obj->deflate, $req_data, "round trip through deflate" );
+
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call" );
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call::Version_2_0" );
 

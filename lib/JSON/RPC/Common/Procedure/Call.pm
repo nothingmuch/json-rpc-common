@@ -91,6 +91,45 @@ has params => (
 	predicate => "has_params",
 );
 
+sub deflate_version {
+	return ();
+}
+sub deflate_method {
+	my $self = shift;
+	return ( method => $self->method );
+}
+
+sub deflate_id {
+	my $self = shift;
+
+	if ( $self->has_id ) {
+		return ( id => $self->id );
+	} else {
+		return ();
+	}
+}
+
+sub deflate_params {
+	my $self = shift;
+
+	if ( $self->has_params ) {
+		return ( params => $self->params );
+	} else {
+		return ();
+	}
+}
+
+sub deflate {
+	my $self = shift;
+
+	return {
+		$self->deflate_version,
+		$self->deflate_method,
+		$self->deflate_id,
+		$self->deflate_params,
+	};
+}
+
 sub is_service { 0 }
 
 sub is_notification {

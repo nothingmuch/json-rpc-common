@@ -20,6 +20,8 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call" );
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call::Version_1_1" );
 
+	is_deeply( $req_obj->deflate, $req_data, "round trip through deflate" );
+
 	is( $req_obj->version, "1.1", "version" );
 
 	ok( $req_obj->has_id, "has_id" );
@@ -87,6 +89,8 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call" );
 	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call::Version_1_1" );
+
+	is_deeply( $req_obj->deflate, $req_data, "round trip through deflate" );
 
 	is( $req_obj->version, "1.1", "version" );
 
