@@ -40,7 +40,7 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 {
 	my $call = JSON::RPC::Common::Procedure::Call->new(
 		method => "does_not_exist",
-		params  => { },
+		params => { },
 	);
 
 	my $res = $call->call( Foo->new );
