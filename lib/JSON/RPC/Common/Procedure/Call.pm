@@ -10,50 +10,7 @@ use Carp qw(croak);
 
 use namespace::clean -except => [qw(meta)];
 
-sub inflate {
-	my ( $class, @args ) = @_;
-
-	my $data;
-	if (@args == 1) {
-		if (defined $args[0]) {
-			no warnings 'uninitialized';
-			(ref($args[0]) eq 'HASH')
-			|| confess "Single parameters to new() must be a HASH ref";
-			$data = $args[0];
-		}
-	}
-	else {
-		$data = { @args };
-	}
-
-	my $subclass = $class->_version_class($data);
-	
-	Class::MOP::load_class($subclass);
-	
-	$subclass->new(%$data);
-}
-
-sub _version_class {
-	my ( $class, $data ) = @_;
-
-	my $version = $class->_get_version($data);
-
-	my @numbers = ( $version =~ /(\d+)/g ) ;
-
-	return join( "::", $class, join("_", Version => @numbers) );
-}
-
-sub _get_version {
-	my ( $class, $data ) = @_;
-
-	if ( exists $data->{jsonrpc} ) {
-		return $data->{jsonrpc}; # presumably 2.0
-	} elsif ( exists $data->{version} ) {
-		return $data->{version}; # presumably 1.1
-	} else {
-		return "1.0";
-	}
-}
+with qw(JSON::RPC::Common::Message);
 
 has result_response_class => (
 	isa => "ClassName",

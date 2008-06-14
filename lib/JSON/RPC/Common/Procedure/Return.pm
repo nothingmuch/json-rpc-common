@@ -10,6 +10,8 @@ use JSON::RPC::Common::Procedure::Return::Error;
 
 use namespace::clean -except => [qw(meta)];
 
+with qw(JSON::RPC::Common::Message);
+
 has result => (
 	isa => "Any",
 	is  => "ro",
