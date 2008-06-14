@@ -12,6 +12,23 @@ use namespace::clean -except => [qw(meta)];
 
 with qw(JSON::RPC::Common::Message);
 
+around new_from_data => sub {
+	my $next = shift;
+	my ( $class, %args ) = @_;
+
+	if ( exists $args{error} ) {
+		$args{error} = $class->inflate_error(delete $args{error}, %args);
+	}
+
+	return $class->$next(%args);
+};
+
+has version => (
+	isa => "Str",
+	is  => "rw",
+	predicate => "has_version",
+);
+
 has result => (
 	isa => "Any",
 	is  => "rw",
