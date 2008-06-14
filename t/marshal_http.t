@@ -36,6 +36,38 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 	}
 }
 
+{
+	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
+
+	my $http_res = HTTP::Response->new( 200, "YATTA", undef, '{"jsonrpc":"2.0","result":"cookie","id":3}' );
+
+	my $res_obj = $m_http->response_to_result($http_res);
+
+	is( $res_obj->version, "2.0", "version 2.0");
+	ok( !$res_obj->has_error, "no error" );
+	is( $res_obj->result, "cookie", "result" );
+	is( $res_obj->id, 3, "id" );
+}
+
+{
+	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
+
+	my $http_res = HTTP::Response->new( 500, "OH NOES", undef, '{"jsonrpc":"2.0","error":{"message":"bork","code":3,"data":"horses"},"id":5}' );
+
+	my $res_obj = $m_http->response_to_result($http_res);
+
+	is( $res_obj->version, "2.0", "version 2.0");
+	ok( !$res_obj->has_result, "no result" );
+	is( $res_obj->id, 5, "id" );
+	ok( $res_obj->has_error, "has error" );
+	my $error = $res_obj->error;
+	isa_ok( $error, "JSON::RPC::Common::Procedure::Return::Error" );
+	isa_ok( $error, "JSON::RPC::Common::Procedure::Return::Version_2_0::Error" );
+	is( $error->code, 3, "error code" );
+	is( $error->message, "bork", "error message" );
+	is_deeply( $error->data, "horses", "error data" );
+}
+
 SKIP: {
 	plan skip "CGI::Expand is required", 2 unless eval { require CGI::Expand };
 

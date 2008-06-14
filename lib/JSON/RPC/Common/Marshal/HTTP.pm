@@ -131,6 +131,40 @@ sub write_result_to_response {
 	return 1;
 }
 
+sub response_to_result {
+	my ( $self, $response ) = @_;
+
+	if ( $response->is_success ) {
+		$self->response_to_result_ok_status($response);
+	} else {
+		$self->response_to_result_error_status($response);
+	}
+}
+
+sub response_to_result_ok_status {
+	my ( $self, $response ) = @_;
+
+	$self->json_to_return( $response->content );
+}
+
+sub response_to_result_error_status {
+	my ( $self, $response ) = @_;
+
+	my $res = $self->json_to_return( $response->content );
+
+	unless ( $res->has_error ) {
+		$res->set_error(
+			message => "unknown http error",
+			code    => $response->code, # FIXME dictionary
+			data    => {
+				response => $response,
+			}
+		);
+	}
+
+	return $res;
+}
+
 sub result_to_response {
 	my ( $self, $result ) = @_;
 
