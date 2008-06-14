@@ -154,7 +154,7 @@ sub response_to_result_error_status {
 
 	unless ( $res->has_error ) {
 		$res->set_error(
-			message => "unknown http error",
+			message => $response->message,
 			code    => $response->code, # FIXME dictionary
 			data    => {
 				response => $response,
