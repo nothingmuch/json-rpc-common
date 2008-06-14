@@ -52,7 +52,7 @@ JSON
 
 	my %required = (
 		method => '{"jsonrpc":"2.0","params":{},"id":3}', # missing method
-		params => '{"jsonrpc":"2.0","method":"hello","id":3}', # missing params
+		params => '{"method":"hello","id":3}', # missing params
 		id => '{"params":[],"method":"hello"}', # missing id (version 1.0)
 	);
 

@@ -16,6 +16,7 @@ has '+version' => (
 
 has '+params' => (
 	isa => "ArrayRef",
+	required => 1,
 );
 
 has '+id' => (
