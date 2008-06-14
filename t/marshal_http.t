@@ -68,6 +68,22 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 	is_deeply( $error->data, "horses", "error data" );
 }
 
+{
+	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
+
+	my $http_res = HTTP::Response->new( 500, "OH NOES", undef, '{}' );
+
+	my $res_obj = $m_http->response_to_result($http_res);
+
+	ok( !$res_obj->has_result, "no result" );
+	ok( !$res_obj->has_id, "no id" );
+	ok( $res_obj->has_error, "has error" );
+	my $error = $res_obj->error;
+	isa_ok( $error, "JSON::RPC::Common::Procedure::Return::Error" );
+	is( $error->message, "OH NOES", "error message" );
+	is_deeply( $error->data, { response => $http_res }, "error data" );
+}
+
 SKIP: {
 	plan skip "CGI::Expand is required", 2 unless eval { require CGI::Expand };
 
