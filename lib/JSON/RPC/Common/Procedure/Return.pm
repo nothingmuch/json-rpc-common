@@ -33,7 +33,9 @@ sub deflate {
 
 	my $version = $self->version;
 
-	croak "Deflating a procedure return of the class " . ref($self) . " is not supported (version is " . ( defined $version ? $version : "undefined" ) . ")";
+	$version = "undefined" unless defined $version;
+
+	croak "Deflating a procedure return of the class " . ref($self) . " is not supported (version is $version)";
 }
 
 __PACKAGE__->meta->make_immutable;
