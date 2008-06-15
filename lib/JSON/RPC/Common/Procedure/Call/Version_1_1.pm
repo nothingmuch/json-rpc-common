@@ -58,15 +58,15 @@ has '+params' => (
 	isa => JSONContainer,
 );
 
-has '+result_response_class' => (
+has '+return_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_1",
 );
 
-has '+result_response_class' => (
+has '+return_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_1",
 );
 
-has '+error_response_class' => (
+has '+error_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_1::Error",
 );
 

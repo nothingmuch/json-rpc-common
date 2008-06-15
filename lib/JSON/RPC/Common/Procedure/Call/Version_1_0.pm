@@ -23,11 +23,11 @@ has '+id' => (
 	required => 1,
 );
 
-has '+result_response_class' => (
+has '+return_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_0",
 );
 
-has '+error_response_class' => (
+has '+error_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_0::Error",
 );
 

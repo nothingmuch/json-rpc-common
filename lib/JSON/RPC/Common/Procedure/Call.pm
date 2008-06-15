@@ -12,13 +12,13 @@ use namespace::clean -except => [qw(meta)];
 
 with qw(JSON::RPC::Common::Message);
 
-has result_response_class => (
+has return_class => (
 	isa => "ClassName",
 	is  => "rw",
 	default => "JSON::RPC::Common::Procedure::Return",
 );
 
-has error_response_class => (
+has error_class => (
 	isa => "ClassName",
 	is  => "rw",
 	default => "JSON::RPC::Common::Procedure::Return::Error",
@@ -128,9 +128,9 @@ sub call {
 sub return_error {
 	my ( $self, @args ) = @_;
 
-	$self->result_response_class->new(
-		error_response_class => $self->error_response_class,
-		error => $self->error_response_class->new_dwim(@args),
+	$self->return_class->new(
+		error_class => $self->error_class,
+		error => $self->error_class->new_dwim(@args),
 		( $self->has_id ? ( id => $self->id ) : () ),
 	);
 }
@@ -140,7 +140,7 @@ sub return_result {
 
 	my $res = @res == 1 ? $res[0] : \@res;
 
-	$self->result_response_class->new(
+	$self->return_class->new(
 		result => $res,
 		( $self->has_id ? ( id => $self->id ) : () ),
 	);
@@ -190,9 +190,9 @@ The name of the method to invoke.
 
 Returns a reference to the parameters hash or array.
 
-=item result_response_class
+=item return_class
 
-=item error_response_class
+=item error_class
 
 The classes to instantiate the response objects.
 

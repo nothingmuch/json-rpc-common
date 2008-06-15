@@ -14,7 +14,7 @@ has '+version' => (
 	default => sub { "1.1" },
 );
 
-has '+error_response_class' => (
+has '+error_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_1_1::Error",
 );
 

@@ -20,11 +20,11 @@ has '+params' => (
 	isa => JSONContainer,
 );
 
-has '+result_response_class' => (
+has '+return_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_2_0",
 );
 
-has '+error_response_class' => (
+has '+error_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_2_0::Error",
 );
 

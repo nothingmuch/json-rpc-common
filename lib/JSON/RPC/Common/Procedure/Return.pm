@@ -41,7 +41,7 @@ has id => (
 	predicate => "has_id",
 );
 
-has error_response_class => (
+has error_class => (
 	isa => "ClassName",
 	is  => "rw",
 	default => "JSON::RPC::Common::Procedure::Return::Error",
@@ -78,7 +78,7 @@ sub inflate_error {
 
 	my $error_class = ref $self
 		? $self->error_class
-		: $self->meta->find_attribute_by_name("error_response_class")->default;
+		: $self->meta->find_attribute_by_name("error_class")->default;
 
 	$error_class->inflate(%$error);
 }
@@ -91,7 +91,7 @@ sub set_error {
 
 sub create_error {
 	my ( $self, @args ) = @_;
-	$self->error_response_class->new_dwim(@args);
+	$self->error_class->new_dwim(@args);
 }
 
 __PACKAGE__->meta->make_immutable;

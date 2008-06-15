@@ -15,7 +15,7 @@ has '+version' => (
 	# init_arg => "jsonrpc", # illegal inherit arg. bah. it's meaningless, so we don't care
 );
 
-has '+error_response_class' => (
+has '+error_class' => (
 	default => "JSON::RPC::Common::Procedure::Return::Version_2_0::Error",
 );
 
