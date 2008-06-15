@@ -135,19 +135,19 @@ sub response_to_result {
 	my ( $self, $response ) = @_;
 
 	if ( $response->is_success ) {
-		$self->response_to_result_ok_status($response);
+		$self->response_to_result_success($response);
 	} else {
-		$self->response_to_result_error_status($response);
+		$self->response_to_result_error($response);
 	}
 }
 
-sub response_to_result_ok_status {
+sub response_to_result_success {
 	my ( $self, $response ) = @_;
 
 	$self->json_to_return( $response->content );
 }
 
-sub response_to_result_error_status {
+sub response_to_result_error {
 	my ( $self, $response ) = @_;
 
 	my $res = $self->json_to_return( $response->content );
