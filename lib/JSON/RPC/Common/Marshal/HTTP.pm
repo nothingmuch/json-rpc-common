@@ -202,12 +202,12 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Marshall::HTTP - COnvert L<HTTP::Request> and
+JSON::RPC::Common::Marshal::HTTP - Convert L<HTTP::Request> and
 L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::Marshall::HTTP;
+	use JSON::RPC::Common::Marshal::HTTP;
 
 	my $m = JSON::RPC::Common::Marshal::HTTP->new;
 
