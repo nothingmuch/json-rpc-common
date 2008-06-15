@@ -12,8 +12,13 @@ WriteMakefile(
 	PL_FILES     => { },
 	PREREQ_PM    => {
 		'Test::use::ok' => 0,
+		'Test::Exception' => 0,
 		'Moose' => '0.48',
+		'MooseX::Types' => 0,
 		'namespace::clean' => '0.08',
+		'JSON' => 0,
+		'HTTP::Request' => 0,
+		'URI::QueryParam' => 0,
 	},
 );
 
