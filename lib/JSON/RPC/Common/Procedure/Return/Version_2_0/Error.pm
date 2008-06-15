@@ -37,13 +37,20 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return::Version_2_0::Error - 
+JSON::RPC::Common::Procedure::Return::Version_2_0::Error - JSON-RPC 2.0 error
+class.
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::Procedure::Return::Version_2_0::Error;
+	my $return_with_error = $call->return_error("foo");
 
 =head1 DESCRIPTION
+
+This class implements 2.0 error objects.
+
+C<code> and C<message> are mandatory.
+
+See L<JSON::RPC::Common::Procedure::Return::Error>.
 
 =cut
 

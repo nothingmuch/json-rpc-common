@@ -42,13 +42,23 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return::Version_1_0::Error - 
+JSON::RPC::Common::Procedure::Return::Version_1_0::Error - JSON-RPC 1.0 error
+class.
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::Procedure::Return::Version_1_0::Error;
+	my $return_with_error = $call->return_error("foo");
 
 =head1 DESCRIPTION
+
+JSON-RPC 1.0 doesn't actually specify what the hell goes in the error field, so
+in order to make 1.0+2.0 server implementations easy this class is provided as
+a compatibility layer.
+
+Inflating a string instantiates an error with an unset code and the string as
+the message.
+
+See L<JSON::RPC::Common::Procedure::Return::Error>
 
 =cut
 

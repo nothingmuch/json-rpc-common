@@ -55,19 +55,3 @@ sub _version_class {
 __PACKAGE__
 
 __END__
-
-=pod
-
-=head1 NAME
-
-JSON::RPC::Common::Message - Shared code for requests and responses
-
-=head1 SYNOPSIS
-
-	use JSON::RPC::Common::Message;
-
-=head1 DESCRIPTION
-
-=cut
-
-

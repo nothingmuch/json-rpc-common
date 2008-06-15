@@ -104,13 +104,88 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return - 
+JSON::RPC::Common::Procedure::Return - JSON-RPC procedure return class
 
 =head1 SYNOPSIS
 
 	use JSON::RPC::Common::Procedure::Return;
 
+	# create a return from a call, retaining the ID
+	my $return = $call->return_result("foo");
+
+	# inflate gets a version specific class
+	my $return = JSON::RPC::Common::Procedure::Return->inflate(
+		version => "2.0",
+		result  => "foo",
+		id      => $id,
+	);
+
+	# you can specify a return with an error, it's just an attribute
+	my $return = JSON::RPC::Common::Procedure::Return->new(
+		error => ...,
+	);
+
 =head1 DESCRIPTION
+
+This class abstracts JSON-RPC procedure returns (results).
+
+Version specific implementation are provided as well.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item id
+
+The ID of the call this is a result for.
+
+Results with no ID are typically error results for parse fails, when the call
+ID could never be determined.
+
+=item result
+
+The JSON data that is the result of the call, if any.
+
+=item error
+
+The error, if any. This is a L<JSON::RPC::Common::Procedure::Return::Error>
+object (or a version specific subclass).
+
+=item error_class
+
+The error class to use when instantiating errors.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item inflate
+
+=item deflate
+
+Go to and from JSON data.
+
+=item inflate_error
+
+=item deflate_error
+
+Helpers for managing the error sub object.
+
+=item set_error
+
+Calls C<create_error> with it's arguments and sets the error to that.
+
+E.g.
+
+	$res->set_error("foo");
+	$res->error->message; # "foo"
+
+=item create_error
+
+Instantiate a new error of class L<error_class> using
+L<JSON::RPC::Common::Procedure::Return::Error/new_dwim>.
 
 =cut
 

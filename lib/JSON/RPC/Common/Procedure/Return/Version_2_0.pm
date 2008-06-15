@@ -41,13 +41,17 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return::Version_2_0 - 
+JSON::RPC::Common::Procedure::Return::Version_2_0 - JSON-RPC 2.0 Procedure Return
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::Procedure::Return::Version_2_0;
+	my $return = $call->return_value("foo");
 
 =head1 DESCRIPTION
+
+This class implements procedure returns for JSON::RPC 2.0.
+
+See L<JSON::RPC::Common::Procedure::Return>.
 
 =cut
 

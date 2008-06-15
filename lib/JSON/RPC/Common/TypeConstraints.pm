@@ -21,13 +21,33 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::TypeConstraints - 
+JSON::RPC::Common::TypeConstraints - Type constraint library
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::TypeConstraints;
+	use JSON::RPC::Common::TypeConstraints qw(JSONValue);
 
 =head1 DESCRIPTION
+
+See L<MooseX::Types>
+
+=head1 TYPES
+
+=over 4
+
+=item JSONDefined
+
+C<Value|ArrayRef|HashRef>
+
+=item JSONValue
+
+C<Undef|Value|ArrayRef|HashRef>
+
+=itme JSONContainer
+
+C<ArrayRef|HashRef>
+
+=back
 
 =cut
 

@@ -16,23 +16,34 @@ JSON::RPC::Common - Transport agnostic JSON RPC helper objects
 
 =head1 SYNOPSIS
 
+	# this is a simplistic example
+	# you probably want to use L<JSON::RPC::Common::Marshal::Text> instead for
+	# something like this.
+
 	use JSON::RPC::Common::Procedure::Call;
 
+	# deserialize whatever json text you have into json data:
 	my $req = from_json($request_body);
 
+	# inflate it and get a call object:
 	my $call = JSON::RPC::Common::Procedure::Call->inflate($req);
 
 	warn $call->version;
 
+	# this will create a result object of the correct class/version/etc
+	# "value" is the return result, regardless of version
 	my $res = $call->return_result("value");
 
+	# finally, convert back to json text:
 	print to_json($res->deflate);
 
 =head1 DESCRIPTION
 
 This module provides abstractions for JSON-RPC 1.0, 1.1 (both variations) and
 2.0 (formerly 1.2) Procedure Call and Procedure Return objects (formerly known
-as request and result), along with errors.
+as request and result), along with error objects. It also provides marshalling
+objects to convert the model objects into JSON text and HTTP
+requests/responses.
 
 This module does not concern itself with the transport layer at all, so the
 JSON-RPC 1.1 and the alternative specification, which are very different on
@@ -60,7 +71,7 @@ clients 2.0.
 
 There are various classes provided by L<JSON::RPC::Common>.
 
-They are designed for high high reusability. All the classes are transport and
+They are designed for high reusability. All the classes are transport and
 representation agnostic except for L<JSON::RPC::Common::Marshal::Text> and
 L<JSON::RPC::Common::Marshal::HTTP> which are completely optional.
 
@@ -81,25 +92,33 @@ JSON-RPC 1.0, 1.1WD, 1.1-alt and 2.0.
 
 =head1 L<JSON::RPC::Common::Handler>
 
+B<TODO>
+
 A generic dispatch table based handler, useful for when you don't want to just
-blindly call methods on certain objects.
+blindly call methods on certain objects using
+L<JSON::RPC::Common::Procedure::Call/call>.
 
 =head2 L<JSON::RPC::Common::Errors>
 
-This class provides dictionaries of error codes for JSON-RPC 1.1 and
+B<TODO>
+
+This class will provide dictionaries of error codes for JSON-RPC 1.1 and
 1.1-alt/2.0.
 
-=head2 L<JSON::RPC::Common::Serializer>
+=head2 L<JSON::RPC::Common::Marshal::Text>
 
 A filter object that uses L<JSON> to serialize procedure calls and returns to
 JSON text, including JSON-RPC standard error handling for deserialization
 failure.
 
-=head2 L<JSON::RPC::Common::Serializer::HTTP>
+=head2 L<JSON::RPC::Common::Marshal::HTTP>
 
-Similar to L<JSON::RPC::Common::Serializer>, but accepts L<HTTP::Request>
-objects and returns L<HTTP::Response> objects. Also knows how to handle
-JSON-RPC 1.1 C<GET> encoded requests.
+A subclass of L<JSON::RPC::Common::Marshal::Text> with additional methods for
+marshaling between L<HTTP::Request>s and L<JSON::RPC::Common::Procedure::Call>
+and L<HTTP::Response> and L<JSON::RPC::Common::Procedure::Return>.
+
+Also knows how to handle JSON-RPC 1.1 C<GET> encoded requests (for all
+versions), providing RESTish call semantics.
 
 =head1 TODO
 
@@ -107,15 +126,28 @@ JSON-RPC 1.1 C<GET> encoded requests.
 
 =item *
 
-An object model for JSON-RPC 1.1 service description
+An object model for JSON-RPC 1.1 service description.
+
+SMD is required by most JSON-RPC 1.1 over HTTP clients.
+
+Since this is generally static, for now you can write one manually, see
+L<http://groups.google.com/group/json-rpc/web/simple-method-description-for-json-rpc-example>
+for an example
 
 =item *
 
-A
+L<Moose> class to SMD translator
+
+=item *
+
+L<MooseX::Storage> enabled objects can serialize themselves into JSON, and
+should DWIM when used. JSON-RPC 1.0 class hints could be used here too.
 
 =back
 
 =head1 SEE ALSO
+
+=head2 On the Intertubes
 
 =over 4
 
@@ -140,6 +172,10 @@ L<http://groups.google.com/group/json-rpc/web/json-rpc-1-2-proposal>
 L<http://groups.google.com/group/json-rpc/web/json-rpc-over-http>
 
 =back
+
+=head2 On the CPAN
+
+L<JSON>, L<JSON::RPC>, L<RPC::JSON>, L<HTTP::Engine>, L<CGI::JSONRPC>
 
 =head1 VERSION CONTROL
 

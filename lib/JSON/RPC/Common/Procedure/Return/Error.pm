@@ -76,13 +76,64 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return::Error - 
+JSON::RPC::Common::Procedure::Return::Error - Base class for JSON-RPC errors
 
 =head1 SYNOPSIS
 
 	use JSON::RPC::Common::Procedure::Return::Error;
 
+	my $error = JSON::RPC::Common::Procedure::Return::Error->new(
+		message => "foo",
+		code => "bah",
+	);
+
+	# or construct a return with an error from a call:
+	my $return = $call->return_error("foo");
+
+	$return->error->message;
+
 =head1 DESCRIPTION
+
+This is a base class for all version specific error implementations.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item code
+
+=item message
+
+=item data
+
+These are the three common JSON-RPC error fields. In JSON-RPC 1.1 C<data> is
+known as C<error>, and in 1.0 none of this is specced at all.
+
+See the version specific subclasses for various behaviors.
+
+Code is an integer, and message is a string.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item new_dwim
+
+Convenience constructor used by
+L<JSON::RPC::Common::Procedure::Call/return_error>.
+
+Will return an object if that's the argument, and otherwise construct an error.
+
+=item inflate
+
+Create an error object from JSON data (not text).
+
+In order to maximize compatibility this inflation routine is very liberal in
+what it accepts.
+
+=back
 
 =cut
 

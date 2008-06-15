@@ -202,13 +202,101 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Marshall::HTTP - 
+JSON::RPC::Common::Marshall::HTTP - COnvert L<HTTP::Request> and
+L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 =head1 SYNOPSIS
 
 	use JSON::RPC::Common::Marshall::HTTP;
 
+	my $m = JSON::RPC::Common::Marshal::HTTP->new;
+
+	my $call = $m->request_to_call($http_request);
+
+	my $res = $call->call($object);
+
+	my $http_response = $m->result_to_response($res);
+
 =head1 DESCRIPTION
+
+This object provides marshalling routines to convert calls and returns to and
+from L<HTTP::Request> and L<HTTP::Response> objects.
+
+=item ATTRIBUTES
+
+=over 4
+
+=item prefer_encoded_get
+
+When set and a C<params> param exists, decode it as Base 64 encoded JSON and
+use that as the parameters instead of the query parameters.
+
+See L<http://json-rpc.googlegroups.com/web/json-rpc-over-http.html>.
+
+B<TODO> Currently buggy, no base 64 decoding is implemented. The spec is shit
+anyway.
+
+=item content_type
+
+Defaults to C<application/json>.
+
+B<TODO> In the default the this class will choose the correct content type
+based on the spec in the future if one is not set explicitly.
+
+=item expand
+
+Whether or not to use an expander on C<GET> style calls.
+
+=item expander
+
+An instance of L<CGI::Expand> or a look alike to use for C<GET> parameter
+expansion.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item request_to_call
+
+=item request_to_call_post
+
+=item request_to_call_get
+
+=item request_to_call_get_encoded
+
+=item request_to_call_get_query
+
+Convert an L<HTTP::Request> to a L<JSON::RPC::Common::Procedure::Call>.
+Depending on what style of request it is, C<request_to_call> will delegate to a
+variant.
+
+=item result_to_response
+
+Convert a L<JSON::RPC::Common::Procedure::Return> to an L<HTTP::Response>.
+
+=item response_to_result
+
+=item response_to_result_success
+
+=item response_to_result_error
+
+Convert an L<HTTP::Response> to a L<JSON::RPC::Common::Procedure::Return>.
+
+A variant is chosen based on C<HTTP::Response/is_success>.
+
+The error handler will ensure that
+L<JSON::RPC::Common::Procedure::Return/error> is set.
+
+=back
+
+=head1 TODO
+
+Conversion of L<JSON::RPC::Common::Procedure::Call> to L<HTTP::Request> is not
+yet implemented.
+
+This should be fairly trivial but I'm a lazy bastard.
 
 =cut
 

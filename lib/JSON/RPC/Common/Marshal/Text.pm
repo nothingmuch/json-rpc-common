@@ -64,14 +64,57 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Marshall::Text - 
+JSON::RPC::Common::Marshall::Text - JSON text marshalling for
+L<JSON::RPC::Common>.
 
 =head1 SYNOPSIS
 
 	use JSON::RPC::Common::Marshall::Text;
 
+	my $m = JSON::RPC::Common::Marshall::Text->new;
+
+	my $return_obj = $m->json_to_return($json_text);
+
 =head1 DESCRIPTION
 
-=cut
+This object serializes L<JSON::RPC::Common::Procedure::Call> and
+L<JSON::RPC::Common::Procedure::Return> objects into JSON text using the
+L<JSON> module.
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item json
+
+The L<JSON> object to use. A default one will be created if not specified.
+
+=item call_class
+
+=item return_class
+
+The classes to call C<inflate> on.
+
+Defaults to L<JSON::RPC::Common::Procedure::Call> and
+L<JSON::RPC::Common::Procedure::Return>.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item call_to_json
+
+=item json_to_call
+
+=item return_to_json
+
+=item json_to_return
+
+These methods do the conversion from objects to json and vice versa.
+
+=back
+
+=cut
 

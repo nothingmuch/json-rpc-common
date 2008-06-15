@@ -211,6 +211,10 @@ version.
 
 This is the reccomended constructor.
 
+=item deflate
+
+Flatten to JSON data
+
 =item new
 
 The actual constructor.
@@ -229,6 +233,12 @@ Dereferences C<params> regardless of representation.
 
 Returns a list of positionals or a key/value list.
 
+=item return_result $result
+
+=item return_error %error_params
+
+Create a new L<JSON::RPC::Common::Procedure::Return> with or without an error.
+
 =item is_notification
 
 Whether this request is a notification (a method that does not need a response).
@@ -239,6 +249,11 @@ Whether this request is a JSON-RPC 1.1 service method (e.g.
 C<system.describe>).
 
 This method is always false for 1.0 and 2.0.
+
+=item call $obj
+
+A convenience method to invoke the call on C<$obj> and create a new return with
+the return value.
 
 =back
 

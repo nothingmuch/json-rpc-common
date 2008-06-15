@@ -38,13 +38,15 @@ __END__
 
 =head1 NAME
 
-JSON::RPC::Common::Procedure::Return::Version_1_0 - 
+JSON::RPC::Common::Procedure::Return::Version_1_0 - JSON-RPC 1.0 error class.
 
 =head1 SYNOPSIS
 
-	use JSON::RPC::Common::Procedure::Return::Version_1_0;
+	my $return_with_error = $call->return_error("foo");
 
 =head1 DESCRIPTION
+
+See L<JSON::RPC::Common::Procedure::Return::Error>
 
 =cut
 
