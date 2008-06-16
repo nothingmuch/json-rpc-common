@@ -1,0 +1,6 @@
+0.02
+		- Various doc improvements
+		- Marshal::HTTP can now make call->request conversion
+
+0.01
+		- Initial release
