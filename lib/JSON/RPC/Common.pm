@@ -90,21 +90,6 @@ JSON-RPC 1.0, 1.1WD, 1.1-alt and 2.0.
 This class and its subclasses implement Procedure Return error objects for
 JSON-RPC 1.0, 1.1WD, 1.1-alt and 2.0.
 
-=head1 L<JSON::RPC::Common::Handler>
-
-B<TODO>
-
-A generic dispatch table based handler, useful for when you don't want to just
-blindly call methods on certain objects using
-L<JSON::RPC::Common::Procedure::Call/call>.
-
-=head2 L<JSON::RPC::Common::Errors>
-
-B<TODO>
-
-This class will provide dictionaries of error codes for JSON-RPC 1.1 and
-1.1-alt/2.0.
-
 =head2 L<JSON::RPC::Common::Marshal::Text>
 
 A filter object that uses L<JSON> to serialize procedure calls and returns to
@@ -123,6 +108,17 @@ versions), providing RESTish call semantics.
 =head1 TODO
 
 =over 4
+
+=item *
+
+L<JSON::RPC::Common::Handler>, a generic dispatch table based handler, useful
+for when you don't want to just blindly call methods on certain objects using
+L<JSON::RPC::Common::Procedure::Call/call>.
+
+=item *
+
+L<JSON::RPC::Common::Errors>, a class that will provide dictionaries of error
+codes for JSON-RPC 1.1 and 1.1-alt/2.0.
 
 =item *
 
