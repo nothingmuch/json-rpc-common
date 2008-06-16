@@ -222,7 +222,7 @@ sub call_to_query_uri {
 sub request_to_call {
 	my ( $self, $request, @args ) = @_;
 
-	my $req_method = lc( "request_to_call_" . $request->method );
+	my $req_method = lc( $request->method . "_request_to_call" );
 
 	if ( my $code = $self->can($req_method) ) {
 		$self->$code($request, @args);
@@ -231,19 +231,23 @@ sub request_to_call {
 	}
 }
 
-sub request_to_call_get {
+sub get_request_to_call {
 	my ( $self, $request, @args ) = @_;
 
 	my $uri = $request->uri;
 
-	my %rpc;
+	$self->uri_to_call($request->uri, request => $request, @args);
+}
+
+sub uri_to_call {
+	my ( $self, $uri, @args ) = @_;
 
 	my $params = $uri->query_form_hash;
 
 	if ( exists $params->{params} and $self->prefer_encoded_get ) {
-		return $self->request_to_call_get_encoded( $request, $params, @args );
+		return $self->encoded_uri_to_call( $uri, @args );
 	} else {
-		return $self->request_to_call_get_query( $request, $params, @args );
+		return $self->query_uri_to_call( $uri, @args );
 	}
 }
 
@@ -258,8 +262,10 @@ sub encode_base64 {
 }
 
 # the sane way, 1.1-alt
-sub request_to_call_get_encoded {
-	my ( $self, $request, $params, @args ) = @_;
+sub encoded_uri_to_call {
+	my ( $self, $uri, @args ) = @_;
+
+	my $params = $uri->query_form_hash;
 
 	# the 'params' URI param is encoded as JSON, inflate it
 	my %rpc = %$params;
@@ -280,8 +286,10 @@ sub request_to_call_get_encoded {
 }
 
 # the less sane but occasionally useful way, 1.1-wd
-sub request_to_call_get_query {
-	my ( $self, $request, $params, @args  ) = @_;
+sub query_uri_to_call {
+	my ( $self, $uri, @args  ) = @_;
+
+	my $params = $uri->query_form_hash;
 
 	my %rpc = ( params => $params );
 
@@ -292,20 +300,20 @@ sub request_to_call_get_query {
 	}
 
 	if ( !exists($rpc{method}) and $self->rest_style_methods ) {
-		my ( $method ) = ( $request->uri->path =~ m{/(\w+)$} );
+		my ( $method ) = ( $uri->path =~ m{/(\w+)$} );
 		$rpc{method} = $method;
 	}
 
 	$rpc{version} ||= "1.1";
 
 	# increases usefulness
-	$rpc{params} = $self->expand_query_params($params, $request, @args);
+	$rpc{params} = $self->expand_query_params($params, @args);
 
 	$self->inflate_call(\%rpc);
 }
 
 sub expand_query_params {
-	my ( $self, $params, $request, @args ) = @_;
+	my ( $self, $params, @args ) = @_;
 
 	if ( $self->expand ) {
 		return $self->expand_hash($params);
@@ -324,7 +332,7 @@ sub collapse_query_params {
 	}
 }
 
-sub request_to_call_post {
+sub post_request_to_call {
 	my ( $self, $request ) = @_;
 	$self->json_to_call( $request->content );
 }
@@ -492,29 +500,39 @@ expansion.
 
 =over 4
 
-=item request_to_call
+=item request_to_call $http_request
 
-=item request_to_call_post
+=item post_request_to_call $http_request
 
-=item request_to_call_get
-
-=item request_to_call_get_encoded
-
-=item request_to_call_get_query
+=item get_request_to_call $http_request
 
 Convert an L<HTTP::Request> to a L<JSON::RPC::Common::Procedure::Call>.
 Depending on what style of request it is, C<request_to_call> will delegate to a
-variant.
+variant method.
 
-=item result_to_response
+Get requests call C<uri_to_call>
+
+=item uri_to_call $uri
+
+=item encoded_uri_to_call $uri
+
+=item query_uri_to_call $uri
+
+Parse a call from a GET request's URI.
+
+=item result_to_response $return
 
 Convert a L<JSON::RPC::Common::Procedure::Return> to an L<HTTP::Response>.
 
-=item response_to_result
+=item write_result_to_response $result, $response
 
-=item response_to_result_success
+Write the result into an object like L<Catalyst::Response>.
 
-=item response_to_result_error
+=item response_to_result $http_response
+
+=item response_to_result_success $http_response
+
+=item response_to_result_error $http_response
 
 Convert an L<HTTP::Response> to a L<JSON::RPC::Common::Procedure::Return>.
 
@@ -548,13 +566,6 @@ If no URI is provided as an argument, C</> will be used.
 
 The flags C<prefer_get> and C<encoded> can also be passed to
 C<call_to_request> to alter the type of request to be generated.
-
-=item result_to_response $result
-
-=item write_result_to_response $result, $response
-
-Either create an L<HTTP::Response> or write the result into an object like
-L<Catalyst::Response>.
 
 =item collapse_query_params
 
