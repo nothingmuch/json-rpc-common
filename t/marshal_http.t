@@ -11,6 +11,8 @@ BEGIN {
 	plan 'no_plan';
 }
 
+use MIME::Base64 qw(encode_base64);
+
 use ok 'JSON::RPC::Common::Marshal::HTTP';
 
 {
@@ -18,6 +20,7 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 
 	my %reqs = (
 		"get with params" => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&oink=3&oink=2&bar=elk' ),
+		"b64 encoded get" => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&params=' . encode_base64('{"oink":[3,2],"bar":"elk"}') ),
 		"encoded get"     => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&params={"oink":[3,2],"bar":"elk"}' ),
 		"post"            => HTTP::Request->new( POST => '/rpc', undef, q|{"version":"1.1","method":"foo","id":4,"params":{"oink":[3,2],"bar":"elk"}}| ),
 	);

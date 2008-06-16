@@ -6,6 +6,7 @@ use Moose;
 use Carp qw(croak);
 
 use URI::QueryParam;
+use MIME::Base64 ();
 
 use namespace::clean -except => [qw(meta)];
 
@@ -68,13 +69,32 @@ sub request_to_call_get {
 	}
 }
 
+sub decode_base64 {
+	my ( $self, $base64 ) = @_;
+	MIME::Base64::decode_base64($base64);
+}
+
+sub encode_base64 {
+	my ( $self, $base64 ) = @_;
+	MIME::Base64::encode_base64($base64);
+}
+
 # the sane way, 1.1-alt
 sub request_to_call_get_encoded {
 	my ( $self, $request, $params, @args ) = @_;
 
 	# the 'params' URI param is encoded as JSON, inflate it
 	my %rpc = %$params;
-	$_ = $self->decode($_) for $rpc{params};
+
+	for my $params ( $rpc{params} ) {
+		# try as unencoded JSON first
+		if ( my $data = do { local $@; eval { $self->decode($params) } } ) {
+			$params = $data;
+		} else {
+			my $json = $self->decode_base64($params) || croak "params are not Base64 encoded";
+			$params = $self->decode($json);
+		}
+	}
 
 	$self->inflate_call(\%rpc);
 }
@@ -232,9 +252,6 @@ When set and a C<params> param exists, decode it as Base 64 encoded JSON and
 use that as the parameters instead of the query parameters.
 
 See L<http://json-rpc.googlegroups.com/web/json-rpc-over-http.html>.
-
-B<TODO> Currently buggy, no base 64 decoding is implemented. The spec is shit
-anyway.
 
 =item content_type
 
