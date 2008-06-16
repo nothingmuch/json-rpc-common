@@ -139,6 +139,11 @@ L<Moose> class to SMD translator
 L<MooseX::Storage> enabled objects can serialize themselves into JSON, and
 should DWIM when used. JSON-RPC 1.0 class hints could be used here too.
 
+=item *
+
+Convert to L<Squirrel> for smaller deps and faster load time. Need to find a
+solution for roles and type constraints. Neither is relied on heavily.
+
 =back
 
 =head1 SEE ALSO
