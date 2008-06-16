@@ -12,6 +12,18 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Marshal::Text);
 
+has prefer_get => (
+	isa => "Bool",
+	is  => "rw",
+	default => 0,
+);
+
+has rest_style_methods => (
+	isa => "Bool",
+	is  => "rw",
+	default => 1,
+);
+
 has prefer_encoded_get => (
 	isa => "Bool",
 	is  => "rw",
@@ -27,18 +39,184 @@ has expand => (
 has expander => (
 	isa => "ClassName|Object",
 	lazy_build => 1,
-	handles => [qw(expand_hash)],
-);
-
-has content_type => (
-	isa => "Str",
-	is  => "rw",
-	default => "application/json",
+	handles => [qw(expand_hash collapse_hash)],
 );
 
 sub _build_expander {
 	require CGI::Expand;
 	return "CGI::Expand";
+}
+
+
+has user_agent => (
+	isa => "Str",
+	is  => "rw",
+	lazy_build => 1,
+);
+
+sub _build_user_agent {
+	my $self = shift;
+	require JSON::RPC::Common;
+	join(" ", ref($self), $JSON::RPC::Common::VERSION),
+}
+
+has content_type => (
+	isa => "Str",
+	is  => "rw",
+	predicate => "has_content_type",
+);
+
+has content_types => (
+	isa => "HashRef[Str]",
+	is  => "rw",
+	lazy_build => 1,
+);
+
+sub _build_content_types {
+	return {
+		"1.0" => "application/json",
+		"1.1" => "application/json",
+		"2.0" => "application/json-rpc",
+	};
+}
+
+has accept_content_type => (
+	isa => "Str",
+	is  => "rw",
+	predicate => "has_accept_content_type",
+);
+
+has accept_content_types => (
+	isa => "HashRef[Str]",
+	is  => "rw",
+	lazy_build => 1,
+);
+
+sub _build_accept_content_types {
+	return {
+		"1.0" => "application/json",
+		"1.1" => "application/json",
+		"2.0" => "application/json-rpc",
+	};
+}
+
+sub get_content_type {
+	my ( $self, $obj ) = @_;
+
+	if ( $self->has_content_type ) {
+		return $self->content_type;
+	} else {
+		return $self->content_types->{ $obj->version || "2.0" };
+	}
+}
+
+sub get_accept_content_type {
+	my ( $self, $obj ) = @_;
+
+	if ( $self->has_accept_content_type ) {
+		return $self->accept_content_type;
+	} else {
+		return $self->accept_content_types->{ $obj->version || "2.0" };
+	}
+}
+
+sub call_to_request {
+	my ( $self, $call, %args ) = @_;
+
+	$args{prefer_get} = $self->prefer_get unless exists $args{prefer_get};
+
+	if ( $args{prefer_get} ) {
+		return $self->call_to_get_request($call, %args);
+	} else {
+		return $self->call_to_post_request($call, %args);
+	}
+}
+
+sub call_to_post_request {
+	my ( $self, $call, %args ) = @_;
+
+	my $uri = $args{uri} || URI->new("/");
+
+	my $encoded = $self->call_to_json($call);
+
+	my $headers = HTTP::Headers->new(
+		User_Agent     => $self->user_agent,
+		Content_Type   => $self->get_content_type($call),
+		Accept         => $self->get_accept_content_type($call),
+		Content_Length => length($encoded),
+	);
+
+	return HTTP::Request->new( POST => $uri, $headers, $encoded );
+}
+
+sub call_to_get_request {
+	my ( $self, $call, @args ) = @_;
+
+	my $uri = $self->call_to_uri($call, @args);
+
+	my $headers = HTTP::Headers->new(
+		User_Agent     => $self->user_agent,
+		Accept         => $self->get_accept_content_type($call),
+	);
+
+	HTTP::Request->new( GET => $uri, $headers );
+}
+
+sub call_to_uri {
+	my ( $self, $call, %args ) = @_;
+
+	no warnings 'uninitialized';
+	my $prefer_encoded_get = exists $args{encoded}
+		? $args{encoded}
+		: ( $call->version eq '2.0' || $self->prefer_encoded_get );
+
+	if ( $prefer_encoded_get ) {
+		return $self->call_to_encoded_uri($call, %args);
+	} else {
+		return $self->call_to_query_uri($call, %args);
+	}
+}
+
+sub call_to_encoded_uri {
+	my ( $self, $call, %args ) = @_;
+
+	my $uri = $args{uri} ? $args{uri}->clone : URI->new("/");
+
+	my $deflated = $self->deflate_call($call);
+
+	my ( $method, $params, $id ) = delete @{ $deflated }{qw(method params id)};
+
+	my $encoded = $self->encode_base64( $self->encode($params) );
+
+	$uri->query_param( params => $encoded );
+	$uri->query_param( method => $method );
+	$uri->query_param( id => $id ) if $call->has_id;
+
+	return $uri;
+}
+
+sub call_to_query_uri {
+	my ( $self, $call, %args ) = @_;
+
+	my $uri = $args{uri} ? $args{uri}->clone : URI->new("/");
+
+	my $deflated = $self->deflate_call( $call );
+
+	my ( $method, $params, $id ) = delete @{ $deflated }{qw(method params id)};
+
+	$params = $self->collapse_query_params($params);
+
+	$uri->query_form( %$params, id => $id );
+
+	if ( $self->rest_style_methods ) {
+		my $path = $uri->path;
+		$path =~ s{/?$}{"/" . $method}e; # add method, remove double trailing slash
+		$uri->path($path);
+	} else {
+		$uri->query_param( method => $method );
+	}
+
+	return $uri;
 }
 
 sub request_to_call {
@@ -86,6 +264,8 @@ sub request_to_call_get_encoded {
 	# the 'params' URI param is encoded as JSON, inflate it
 	my %rpc = %$params;
 
+	$rpc{version} ||= "2.0";
+
 	for my $params ( $rpc{params} ) {
 		# try as unencoded JSON first
 		if ( my $data = do { local $@; eval { $self->decode($params) } } ) {
@@ -105,26 +285,40 @@ sub request_to_call_get_query {
 
 	my %rpc = ( params => $params );
 
-	foreach my $key (qw(version jsonrpc method id)) {
+	foreach my $key (qw(version jsonrpc method id) ) {
 		if ( exists $params->{$key} ) {
 			$rpc{$key} = delete $params->{$key};
 		}
 	}
 
-	croak "JSON-RPC 1.0 is not supported on HTTP GET"
-		unless ( ( $rpc{jsonrpc} || $rpc{version} || 0 ) >= 1.1 );
+	if ( !exists($rpc{method}) and $self->rest_style_methods ) {
+		my ( $method ) = ( $request->uri->path =~ m{/(\w+)$} );
+		$rpc{method} = $method;
+	}
+
+	$rpc{version} ||= "1.1";
 
 	# increases usefulness
-	$rpc{params} = $self->process_query_params($params, $request, @args);
+	$rpc{params} = $self->expand_query_params($params, $request, @args);
 
 	$self->inflate_call(\%rpc);
 }
 
-sub process_query_params {
+sub expand_query_params {
 	my ( $self, $params, $request, @args ) = @_;
 
 	if ( $self->expand ) {
 		return $self->expand_hash($params);
+	} else {
+		return $params;
+	}
+}
+
+sub collapse_query_params {
+	my ( $self, $params, $request, @args ) = @_;
+
+	if ( $self->expand ) {
+		return $self->collapse_hash($params);
 	} else {
 		return $params;
 	}
@@ -197,7 +391,7 @@ sub create_http_response {
 	HTTP::Response->new(
 		$args{status},
 		undef,
-		{ "Content-Type" => $args{content_type} },
+		HTTP::Headers->new( Content_Type => $args{content_type} ),
 		$args{body},
 	);
 }
@@ -207,7 +401,7 @@ sub result_to_response_params {
 
 	return (
 		status       => ( $result->has_error ? $result->error->http_status : 200 ),
-		content_type => $self->content_type, # FIXME json-rpc for 1.1-alt and 2.0?
+		content_type => $self->get_content_type($result),
 		body         => $self->encode($result->deflate),
 	);
 }
@@ -246,6 +440,17 @@ from L<HTTP::Request> and L<HTTP::Response> objects.
 
 =over 4
 
+=item prefer_get
+
+When encoding a call into a request, prefer GET.
+
+Not reccomended.
+
+=item rest_style_methods
+
+When encoding a GET request, use REST style URI formatting (the method is part
+of the path, not a parameter).
+
 =item prefer_encoded_get
 
 When set and a C<params> param exists, decode it as Base 64 encoded JSON and
@@ -253,12 +458,24 @@ use that as the parameters instead of the query parameters.
 
 See L<http://json-rpc.googlegroups.com/web/json-rpc-over-http.html>.
 
+=item user_agent
+
+Defaults to the marshal object's class name and the L<JSON::RPC::Common>
+version number.
+
 =item content_type
 
-Defaults to C<application/json>.
+=item accept_content_type
 
-B<TODO> In the default the this class will choose the correct content type
-based on the spec in the future if one is not set explicitly.
+=item content_types
+
+=item accept_content_types
+
+When explicitly set these are the values of the C<Content-Type> and C<Accept>
+headers to set.
+
+Otherwise they will default to C<application/json> with calls/returns version
+1.0 and 1.1, and C<application/json-rpc> with 2.0 objects.
 
 =item expand
 
@@ -306,14 +523,51 @@ A variant is chosen based on C<HTTP::Response/is_success>.
 The error handler will ensure that
 L<JSON::RPC::Common::Procedure::Return/error> is set.
 
+=item call_to_request $call, %args
+
+=item call_to_get_request $call, %args
+
+=item call_to_post_request $call, %args
+
+=item call_to_uri $call, %args
+
+=item call_to_encoded_uri $call, %args
+
+=item call_to_query_uri $call, %args
+
+Convert a call to a request (or just a URI for GET requests).
+
+The arguments can contain a C<uri> parameter, which is the base of the request.
+
+With GET requests, under C<rest_style_methods> that URI's path will be
+appended, and otherwise parameters will just be added.
+
+POST requests do not cloen and alter the URI.
+
+If no URI is provided as an argument, C</> will be used.
+
+The flags C<prefer_get> and C<encoded> can also be passed to
+C<call_to_request> to alter the type of request to be generated.
+
+=item result_to_response $result
+
+=item write_result_to_response $result, $response
+
+Either create an L<HTTP::Response> or write the result into an object like
+L<Catalyst::Response>.
+
+=item collapse_query_params
+
+=item expand_query_params
+
+Only used for query encoded GET requests. If C<expand> is set will cause
+expansion of the params. Otherwise it's a noop.
+
+Subclass and override to process query params into RPC params as necessary.
+
+Note that this is B<NOT> in any of the JSON-RPC specs.
+
 =back
-
-=head1 TODO
-
-Conversion of L<JSON::RPC::Common::Procedure::Call> to L<HTTP::Request> is not
-yet implemented.
-
-This should be fairly trivial but I'm a lazy bastard.
 
 =cut
 

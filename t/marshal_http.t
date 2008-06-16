@@ -20,6 +20,7 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 
 	my %reqs = (
 		"get with params" => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&oink=3&oink=2&bar=elk' ),
+		"REST style"      => HTTP::Request->new( GET =>  '/rpc/foo?version=1.1&id=4&oink=3&oink=2&bar=elk' ),
 		"b64 encoded get" => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&params=' . encode_base64('{"oink":[3,2],"bar":"elk"}') ),
 		"encoded get"     => HTTP::Request->new( GET =>  '/rpc?version=1.1&method=foo&id=4&params={"oink":[3,2],"bar":"elk"}' ),
 		"post"            => HTTP::Request->new( POST => '/rpc', undef, q|{"version":"1.1","method":"foo","id":4,"params":{"oink":[3,2],"bar":"elk"}}| ),
@@ -36,6 +37,34 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 		is( $call->method, "foo", "method" );
 		is( $call->id, 4, "id" );
 		is_deeply( $call->params, { oink => [ 3, 2 ], bar => "elk" }, "params" );
+
+		foreach my $opts (
+			{},
+			{ prefer_get => 0 },
+			{ prefer_get => 1, encoded => 0, },
+			{ prefer_get => 1, encoded => 1, },
+		) {
+			ok( my $re_req = $m_http->call_to_request($call, %$opts), "call_to_request" );
+			isa_ok( $re_req, "HTTP::Request" );
+
+			ok( my $re_call = $m_http->request_to_call( $re_req ), "round tripped call" );
+
+			my $def_1 = $call->deflate;
+			my $def_2 = $re_call->deflate;
+
+			if ( $opts->{prefer_get} ) {
+				# GET can't guarantee version, we need to scrub that
+				foreach my $hash ( $def_1, $def_2 ) {
+					foreach my $key qw(version jsonrpc) {
+						delete $hash->{$key};
+					}
+				}
+			}
+
+			use Data::Dumper;
+			is_deeply( $def_1, $def_2, "round trip call is_deeply first one" )
+				or diag Dumper($def_1, $def_2, $re_req, $opts);
+		}
 	}
 }
 
@@ -50,6 +79,16 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 	ok( !$res_obj->has_error, "no error" );
 	is( $res_obj->result, "cookie", "result" );
 	is( $res_obj->id, 3, "id" );
+
+	isa_ok( my $re_http_res = $m_http->result_to_response($res_obj), "HTTP::Response" );
+
+	ok( my $re_res = $m_http->response_to_result($re_http_res), "round trip result" );
+
+	is_deeply(
+		$re_res->deflate,
+		$res_obj->deflate,
+		"round trip result eq deeply",
+	);
 }
 
 {
@@ -69,6 +108,16 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 	is( $error->code, 3, "error code" );
 	is( $error->message, "bork", "error message" );
 	is_deeply( $error->data, "horses", "error data" );
+
+	isa_ok( my $re_http_res = $m_http->result_to_response($res_obj), "HTTP::Response" );
+
+	ok( my $re_res = $m_http->response_to_result($re_http_res), "round trip result" );
+
+	is_deeply(
+		$re_res->deflate,
+		$res_obj->deflate,
+		"round trip result eq deeply",
+	);
 }
 
 {
