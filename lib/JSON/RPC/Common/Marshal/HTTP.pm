@@ -444,7 +444,7 @@ L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 This object provides marshalling routines to convert calls and returns to and
 from L<HTTP::Request> and L<HTTP::Response> objects.
 
-=item ATTRIBUTES
+=head1 ATTRIBUTES
 
 =over 4
 

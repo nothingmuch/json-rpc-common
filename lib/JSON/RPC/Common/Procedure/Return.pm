@@ -187,6 +187,8 @@ E.g.
 Instantiate a new error of class L<error_class> using
 L<JSON::RPC::Common::Procedure::Return::Error/new_dwim>.
 
+=back
+
 =cut
 
 

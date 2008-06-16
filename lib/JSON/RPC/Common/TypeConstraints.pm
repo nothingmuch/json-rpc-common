@@ -43,7 +43,7 @@ C<Value|ArrayRef|HashRef>
 
 C<Undef|Value|ArrayRef|HashRef>
 
-=itme JSONContainer
+=item JSONContainer
 
 C<ArrayRef|HashRef>
 
