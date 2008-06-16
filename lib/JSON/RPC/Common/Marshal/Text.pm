@@ -34,14 +34,24 @@ has return_class => (
 	handles => { "inflate_return" => "inflate" },
 );
 
+sub deflate_call {
+	my ( $self, $call ) = @_;
+	$call->deflate;
+}
+
+sub deflate_return {
+	my ( $self, $return ) = @_;
+	$return->deflate;
+}
+
 sub call_to_json {
 	my ( $self, $call ) = @_;
-	$self->encode( $call->deflate );
+	$self->encode( $self->deflate_call($call) );
 }
 
 sub return_to_json {
 	my ( $self, $ret ) = @_;
-	$self->encode( $ret->deflate );
+	$self->encode( $self->deflate_return($ret) );
 }
 
 sub json_to_call {
