@@ -168,6 +168,11 @@ JSON::RPC::Common::Procedure::Call - JSON RPC Procedure Call base class.
 
 =head1 DESCRIPTION
 
+A JSON-RPC Procedure Call (ed: *rolls eys*, what was wrong with "request"?) is
+either a notification or a method invocation in JSON-PRC.
+
+See L<http://json-rpc.org/wiki/specification> for more details.
+
 =head1 ATTRIBUTES
 
 All attributes are read only unless otherwise specified.
