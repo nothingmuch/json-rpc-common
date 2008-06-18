@@ -49,6 +49,12 @@ sub _version_class {
 
 	my @numbers = ( $version =~ /(\d+)/g ) ;
 
+	if ( $class eq __PACKAGE__ ) {
+		$class = exists $data->{method}
+			? "JSON::RPC::Common::Procedure::Call"
+			: "JSON::RPC::Common::Procedure::Return";
+	}
+
 	return join( "::", $class, join("_", Version => @numbers) );
 }
 

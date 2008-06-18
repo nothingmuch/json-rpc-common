@@ -83,3 +83,29 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 
 	ok( $req_obj->is_notification, "no id means notification" );
 }
+
+{
+	my $req_data = {
+		jsonrpc => "2.0",
+		method  => "hello",
+		id      => "foo",
+		params  => { foo => "bar" },
+	};
+
+	my $req_obj = JSON::RPC::Common::Message->inflate($req_data);
+
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call" );
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Call::Version_2_0" );
+}
+{
+	my $req_data = {
+		jsonrpc => "2.0",
+		id      => "foo",
+		result  => { foo => "bar" },
+	};
+
+	my $req_obj = JSON::RPC::Common::Message->inflate($req_data);
+
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Return" );
+	isa_ok( $req_obj, "JSON::RPC::Common::Procedure::Return::Version_2_0" );
+}
