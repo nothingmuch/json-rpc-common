@@ -3,6 +3,8 @@
 package JSON::RPC::Common::Message;
 use Moose::Role;
 
+use namespace::clean -except => [qw(meta)];
+
 requires 'deflate';
 
 sub inflate {
