@@ -3,6 +3,8 @@
 package JSON::RPC::Common::Message;
 use Moose::Role;
 
+use Carp qw(croak);
+
 use namespace::clean -except => [qw(meta)];
 
 requires 'deflate';
@@ -52,9 +54,13 @@ sub _version_class {
 	my @numbers = ( $version =~ /(\d+)/g ) ;
 
 	if ( $class eq __PACKAGE__ ) {
-		$class = exists $data->{method}
-			? "JSON::RPC::Common::Procedure::Call"
-			: "JSON::RPC::Common::Procedure::Return";
+		if ( exists $data->{method} ) {
+			$class = "JSON::RPC::Common::Procedure::Call";
+		} elsif ( exists $data->{id} or exists $data->{result} ) {
+			$class = "JSON::RPC::Common::Procedure::Return";
+		} else {
+			croak "Don't know what kind of message $data is (keys are @{[ keys %$data ]})";
+		}
 	}
 
 	return join( "::", $class, join("_", Version => @numbers) );
