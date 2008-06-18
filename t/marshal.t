@@ -32,7 +32,7 @@ JSON
 
 	my $res = $call->return_result("bah");
 
-	my $text = $m_json->return_to_json($res);
+	my $text = $m_json->message_to_json($res);
 
 	is_deeply(
 		from_json($text),
