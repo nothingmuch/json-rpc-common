@@ -214,7 +214,7 @@ These vary per subclass.
 A factory constructor. Delegates to C<new> on a subclass based on the protocol
 version.
 
-This is the reccomended constructor.
+This is the recommended constructor.
 
 =item deflate
 
