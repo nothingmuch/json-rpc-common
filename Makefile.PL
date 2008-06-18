@@ -16,7 +16,7 @@ WriteMakefile(
 		'Moose' => '0.48',
 		'MooseX::Types' => 0,
 		'namespace::clean' => '0.08',
-		'JSON' => 0,
+		'JSON' => 2.11,
 		'HTTP::Request' => 0,
 		'URI::QueryParam' => 0,
 		'MIME::Base64' => 0,
