@@ -3,7 +3,10 @@
 package JSON::RPC::Common::Marshal::Text;
 use Moose;
 
+use Carp qw(croak);
+
 use JSON ();
+use JSON::RPC::Common::Message;
 use JSON::RPC::Common::Procedure::Call;
 use JSON::RPC::Common::Procedure::Return;
 
@@ -19,6 +22,13 @@ has json => (
 sub _build_json {
 	JSON->new;
 }
+
+has message_class => (
+	isa => "ClassName",
+	is  => "rw",
+	default => "JSON::RPC::Common::Message",
+	handles => { "inflate_message" => "inflate" },
+);
 
 has call_class => (
 	isa => "ClassName",
@@ -42,6 +52,23 @@ sub deflate_call {
 sub deflate_return {
 	my ( $self, $return ) = @_;
 	$return->deflate;
+}
+
+sub message_to_json {
+	my ( $self, $message ) = @_;
+
+	if ( $message->isa("JSON::RPC::Common::Procedure::Call") ) {
+		$self->call_to_json($message);
+	} elsif ( $message->isa("JSON::RPC::Common::Procedure::Return") ) {
+		$self->return_to_json($message);
+	} else {
+		croak "I dunno wtf $message is";
+	}
+}
+
+sub json_to_message {
+	my ( $self, $json ) = @_;
+	$self->inflate_message( $self->decode($json) );
 }
 
 sub call_to_json {
