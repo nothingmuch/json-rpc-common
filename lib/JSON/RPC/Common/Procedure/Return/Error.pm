@@ -31,7 +31,6 @@ sub inflate {
 		}
 		$data = { @args };
 	}
-
 	my %constructor_args;
 
 	foreach my $arg ( qw(message code) ) {
