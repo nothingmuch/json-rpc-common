@@ -40,7 +40,9 @@ sub inflate {
 		$constructor_args{$arg} = delete $data->{$arg} if exists $data->{$arg};
 	}
 
-	$constructor_args{data} = (join(" ", keys %$data) eq 'data' ? $data->{data} : $data);
+	if ( keys %$data ) {
+		$constructor_args{data} = (join(" ", keys %$data) eq 'data' ? $data->{data} : $data);
+	}
 
 	$class->new(%constructor_args);
 }
