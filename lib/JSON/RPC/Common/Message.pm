@@ -57,7 +57,7 @@ sub _version_class {
 		} elsif ( exists $data->{id} or exists $data->{result} ) {
 			$class = "JSON::RPC::Common::Procedure::Return";
 		} else {
-			croak "Don't know what kind of message $data is (keys are @{[ keys %$data ]})";
+			croak "Couldn't determine type of message (call or return)";
 		}
 	}
 
