@@ -125,14 +125,20 @@ sub call {
 	}
 }
 
-sub return_error {
+sub create_return {
 	my ( $self, @args ) = @_;
 
 	$self->return_class->new(
 		error_class => $self->error_class,
-		error => $self->error_class->new_dwim(@args),
 		( $self->has_id ? ( id => $self->id ) : () ),
+		@args,
 	);
+}
+
+sub return_error {
+	my ( $self, @args ) = @_;
+
+	$self->create_return( error => $self->error_class->new_dwim(@args) );
 }
 
 sub return_result {
@@ -140,10 +146,7 @@ sub return_result {
 
 	my $res = @res == 1 ? $res[0] : \@res;
 
-	$self->return_class->new(
-		result => $res,
-		( $self->has_id ? ( id => $self->id ) : () ),
-	);
+	$self->create_return( result => $res );
 }
 
 __PACKAGE__->meta->make_immutable;
