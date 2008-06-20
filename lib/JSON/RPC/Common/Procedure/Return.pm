@@ -80,7 +80,7 @@ sub inflate_error {
 		? $self->error_class
 		: $self->meta->find_attribute_by_name("error_class")->default;
 
-	$error_class->inflate(%$error);
+	$error_class->inflate($error);
 }
 
 sub set_error {
