@@ -23,10 +23,8 @@ sub inflate {
 	my ( $class, @args ) = @_;
 
 	my $data;
-	if (@args == 1) {
-		if (defined $args[0] and (ref($args[0])||'') eq 'HASH') {
-			$data = { %{ $args[0] } };
-		}
+	if (@args == 1 and defined $args[0] and (ref($args[0])||'') eq 'HASH') {
+		$data = { %{ $args[0] } };
 	} else {
 		if ( @args % 2 == 1 ) {
 			unshift @args, "message";
