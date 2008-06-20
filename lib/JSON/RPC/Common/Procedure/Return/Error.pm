@@ -60,7 +60,7 @@ has message => (
 has code => (
 	isa => "Int",
 	is  => "rw",
-	predicate => "has_message",
+	predicate => "has_code",
 );
 
 # FIXME delegate to a dictionary
