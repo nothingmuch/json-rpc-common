@@ -208,7 +208,7 @@ sub call_to_query_uri {
 
 	$uri->query_form( %$params, id => $id );
 
-	if ( $self->rest_style_methods ) {
+	if ( exists $args{rest_style_methods} ? $args{rest_style_methods} : $self->rest_style_methods ) {
 		my $path = $uri->path;
 		$path =~ s{/?$}{"/" . $method}e; # add method, remove double trailing slash
 		$uri->path($path);
