@@ -1,3 +1,9 @@
+0.04
+		- Added support for path_info/base_path in Marshal::HTTP, for complex
+		  method names under rest_style_methods
+		- Improved error support, but not 100% there yet, when Moose has custom
+		  exception object support we will be able to generate much better errors
+
 0.03
 		- Cleanup release... Some method name refactoring and better docs
 
