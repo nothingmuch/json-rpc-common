@@ -133,9 +133,9 @@ sub call_to_request {
 }
 
 sub call_to_post_request {
-	my ( $self, $call, %args ) = @_;
+	my ( $self, $call, @args ) = @_;
 
-	my $uri = $args{uri} || URI->new("/");
+	my $uri = $self->call_reconstruct_uri_base($call, @args);
 
 	my $encoded = $self->call_to_json($call);
 
@@ -177,10 +177,30 @@ sub call_to_uri {
 	}
 }
 
-sub call_to_encoded_uri {
+sub call_reconstruct_uri_base {
 	my ( $self, $call, %args ) = @_;
 
-	my $uri = $args{uri} ? $args{uri}->clone : URI->new("/");
+	if ( my $base_path = $args{base_path} ) {
+		return URI->new($base_path);
+	} elsif ( my $uri = $args{uri} ) {
+		$uri = $uri->clone;
+
+		if ( my $path_info = $args{path_info} ) {
+			my $path = $uri->path;
+			$path =~ s/\Q$path_info\E$//;
+			$uri->path($path);
+		}
+
+		return $uri;
+	} else {
+	   	URI->new('/');
+	}
+}
+
+sub call_to_encoded_uri {
+	my ( $self, $call, @args ) = @_;
+
+	my $uri = $self->call_reconstruct_uri_base($call, @args);
 
 	my $deflated = $self->deflate_call($call);
 
@@ -198,7 +218,7 @@ sub call_to_encoded_uri {
 sub call_to_query_uri {
 	my ( $self, $call, %args ) = @_;
 
-	my $uri = $args{uri} ? $args{uri}->clone : URI->new("/");
+	my $uri = $self->call_reconstruct_uri_base($call, %args);
 
 	my $deflated = $self->deflate_call( $call );
 
@@ -234,20 +254,20 @@ sub request_to_call {
 sub get_request_to_call {
 	my ( $self, $request, @args ) = @_;
 
-	my $uri = $request->uri;
-
-	$self->uri_to_call($request->uri, request => $request, @args);
+	$self->uri_to_call(request => $request, @args);
 }
 
 sub uri_to_call {
-	my ( $self, $uri, @args ) = @_;
+	my ( $self, %args ) = @_;
+
+	my $uri = $args{uri} || ($args{request} || croak "Either 'uri' or 'request' is mandatory")->uri;
 
 	my $params = $uri->query_form_hash;
 
 	if ( exists $params->{params} and $self->prefer_encoded_get ) {
-		return $self->encoded_uri_to_call( $uri, @args );
+		return $self->encoded_uri_to_call( $uri, %args );
 	} else {
-		return $self->query_uri_to_call( $uri, @args );
+		return $self->query_uri_to_call( $uri, %args );
 	}
 }
 
@@ -287,7 +307,7 @@ sub encoded_uri_to_call {
 
 # the less sane but occasionally useful way, 1.1-wd
 sub query_uri_to_call {
-	my ( $self, $uri, @args  ) = @_;
+	my ( $self, $uri, %args  ) = @_;
 
 	my $params = $uri->query_form_hash;
 
@@ -299,15 +319,23 @@ sub query_uri_to_call {
 		}
 	}
 
-	if ( !exists($rpc{method}) and $self->rest_style_methods ) {
-		my ( $method ) = ( $uri->path =~ m{/(\w+)$} );
-		$rpc{method} = $method;
+	if ( !exists($rpc{method}) and $args{rest_style_methods} || $self->rest_style_methods ) {
+		if ( my $path_info = $args{path_info} ) {
+			( $rpc{method} = $path_info ) =~ s{^/}{};
+		} elsif ( my $base = $args{base_path} ) {
+			my ( $method ) = ( $uri->path =~ m{^\Q$base\E(.*)$} );
+			$method =~ s{^/}{};
+			$rpc{method} = $method;
+		} else {
+			my ( $method ) = ( $uri->path =~ m{/(\w+)$} );
+			$rpc{method} = $method;
+		}
 	}
 
 	$rpc{version} ||= "1.1";
 
 	# increases usefulness
-	$rpc{params} = $self->expand_query_params($params, @args);
+	$rpc{params} = $self->expand_query_params($params, %args);
 
 	$self->inflate_call(\%rpc);
 }

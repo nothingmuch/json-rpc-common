@@ -71,6 +71,77 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 {
 	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
 
+
+	my %reqs = (
+		"explicit path_info & base" => [
+			HTTP::Request->new( GET => '/some/app/rpc/elaborate/method?version=1.1&id=4&oink=3&oink=2&bar=elk' ),
+			path_info => "/elaborate/method",
+			base_path => "/some/app/rpc",
+		],
+		"just base" => [
+			HTTP::Request->new( GET => '/some/app/rpc/elaborate/method?version=1.1&id=4&oink=3&oink=2&bar=elk' ),
+			base_path => "/some/app/rpc",
+		],
+	);
+
+	foreach my $req ( keys %reqs ) {
+		my ( $req_obj, %args ) = @{$reqs{$req}};
+
+		ok( my $call = $m_http->request_to_call($req_obj, %args), "$req into proc call" );
+
+		isa_ok( $call, "JSON::RPC::Common::Procedure::Call" );
+
+		is( $call->version, "1.1", "version" );
+		is( $call->method, "elaborate/method", "method" );
+		is( $call->id, 4, "id" );
+		is_deeply( $call->params, { oink => [ 3, 2 ], bar => "elk" }, "params" );
+
+		foreach my $opts (
+			{},
+			{ prefer_get => 0 },
+			{ prefer_get => 1, encoded => 0, rest_style_methods => 1 },
+			{ prefer_get => 1, encoded => 0, rest_style_methods => 0, },
+			{ prefer_get => 1, encoded => 1, }, # rest style methods don't apply
+		) {
+			ok( my $re_req = $m_http->call_to_request($call, %args, %$opts), "$req back through call_to_request (" . ( $opts->{prefer_get} ? ( $opts->{encode} ? "en" : "de" ) . "coded get" : "post" ) . ")" );
+			isa_ok( $re_req, "HTTP::Request" );
+
+			if ( $opts->{rest_style_methods} ) {
+				like( $re_req->uri->path, qr{rpc/elaborate/method$}, "method is in PATH_INFO" );
+			} else {
+				unlike( $re_req->uri->path, qr{elaborate}, "method is not in path at all" );
+
+				if ( $opts->{prefer_get} ) {
+					is( $re_req->uri->query_param("method"), "elaborate/method", "method is a param" );
+				}
+			}
+
+			like( $re_req->uri, qr{^/some/app/rpc}, "base path" );
+
+			ok( my $re_call = $m_http->request_to_call( $re_req, %args ), "round tripped call" );
+
+			my $def_1 = $call->deflate;
+			my $def_2 = $re_call->deflate;
+
+			if ( $opts->{prefer_get} ) {
+				# GET can't guarantee version, we need to scrub that
+				foreach my $hash ( $def_1, $def_2 ) {
+					foreach my $key qw(version jsonrpc) {
+						delete $hash->{$key};
+					}
+				}
+			}
+
+			use Data::Dumper;
+			is_deeply( $def_1, $def_2, "round trip call is_deeply first one" )
+				or diag Dumper($def_1, $def_2, $re_req, $opts);
+		}
+	}
+}
+
+{
+	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
+
 	my $http_res = HTTP::Response->new( 200, "YATTA", undef, '{"jsonrpc":"2.0","result":"cookie","id":3}' );
 
 	my $res_obj = $m_http->response_to_result($http_res);
