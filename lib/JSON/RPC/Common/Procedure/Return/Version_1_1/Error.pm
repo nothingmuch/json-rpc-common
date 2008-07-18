@@ -14,7 +14,7 @@ has '+message' => (
 );
 
 has '+code' => (
-	required => 1,
+	default => 500,
 );
 
 has name => (
