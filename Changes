@@ -3,6 +3,8 @@
 		  method names under rest_style_methods
 		- Improved error support, but not 100% there yet, when Moose has custom
 		  exception object support we will be able to generate much better errors
+		- fixed JSON::RPC::Common::Procedure::Call::Version_1_1 to use
+		  BUILDARGS instead of around 'new'.
 
 0.03
 		- Cleanup release... Some method name refactoring and better docs
