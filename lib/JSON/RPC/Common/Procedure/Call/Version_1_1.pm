@@ -3,6 +3,8 @@
 package JSON::RPC::Common::Procedure::Call::Version_1_1;
 use Moose;
 
+use MRO::Compat;
+
 use JSON::RPC::Common::TypeConstraints qw(JSONContainer);
 
 use JSON::RPC::Common::Procedure::Return::Version_1_1;
@@ -16,30 +18,19 @@ extends qw(JSON::RPC::Common::Procedure::Call);
 sub BUILDARGS {
 	my ( $self, @args ) = @_;
 
-	my %data;
-	if (@args == 1) {
-		if (defined $args[0]) {
-			no warnings 'uninitialized';
-			(ref($args[0]) eq 'HASH')
-			|| confess "Single parameters to new() must be a HASH ref";
-			%data = %{$args[0]};
-		}
-	}
-	else {
-		%data = @args;
-	}
+	my $params = $self->next::method(@args);
 
-	if ( exists $data{kwparams} ) {
-		if ( exists $data{params} ) {
-			croak "params and kwparams are mutuall exclusive";
+	if ( exists $params->{kwparams} ) {
+		if ( exists $params->{params} ) {
+			croak "params and kwparams are mutually exclusive";
 		} else {
-			$data{params} = delete $data{kwparams};
+			$params->{params} = delete $params->{kwparams};
 		}
 
-		$data{alt_spec} = 1 unless exists $data{alt_spec};
+		$params->{alt_spec} = 1 unless exists $params->{alt_spec};
 	}
 
-	return \%data
+	return $params;
 }
 
 has '+version' => (
