@@ -15,6 +15,7 @@ WriteMakefile(
 		'Test::Exception' => 0,
 		'Moose' => '0.48',
 		'MooseX::Types' => 0,
+		'MooseX::Types::Moose' => 0,
 		'namespace::clean' => '0.08',
 		'JSON' => 2.11,
 		'HTTP::Request' => 0,
