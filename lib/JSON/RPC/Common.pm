@@ -2,7 +2,7 @@
 
 package JSON::RPC::Common;
 
-our $VERSION = "0.05";
+our $VERSION = "0.06";
 
 __PACKAGE__
 
