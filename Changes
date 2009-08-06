@@ -1,3 +1,6 @@
+0.06
+		- Encode/decode UTF8 automatically in the HTTP marshal
+
 0.05
 		- Fix MooseX::Types related warnings
 
