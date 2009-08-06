@@ -3,6 +3,9 @@
 use strict;
 use warnings;
 
+use utf8;
+use Encode;
+
 use Test::More;
 
 BEGIN {
@@ -142,18 +145,23 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 {
 	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;
 
-	my $http_res = HTTP::Response->new( 200, "YATTA", undef, '{"jsonrpc":"2.0","result":"cookie","id":3}' );
+	my $http_res = HTTP::Response->new( 200, "YATTA", undef, Encode::encode( utf8 => '{"jsonrpc":"2.0","result":"שלום","id":3}' ) );
 
 	my $res_obj = $m_http->response_to_result($http_res);
 
 	is( $res_obj->version, "2.0", "version 2.0");
 	ok( !$res_obj->has_error, "no error" );
-	is( $res_obj->result, "cookie", "result" );
+	is( $res_obj->result, "שלום", "result" );
+	ok( utf8::is_utf8($res_obj->result), "unicode decoded" );
 	is( $res_obj->id, 3, "id" );
 
 	isa_ok( my $re_http_res = $m_http->result_to_response($res_obj), "HTTP::Response" );
 
+	ok( !utf8::is_utf8($re_http_res->content), "body is not unicode (encoded)" );
+
 	ok( my $re_res = $m_http->response_to_result($re_http_res), "round trip result" );
+
+	ok( utf8::is_utf8($re_res->result), "unicode decoded" );
 
 	is_deeply(
 		$re_res->deflate,

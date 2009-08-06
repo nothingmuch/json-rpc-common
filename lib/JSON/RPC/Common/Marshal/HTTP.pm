@@ -12,6 +12,10 @@ use namespace::clean -except => [qw(meta)];
 
 extends qw(JSON::RPC::Common::Marshal::Text);
 
+sub _build_json {
+	JSON->new->utf8(1);
+}
+
 has prefer_get => (
 	isa => "Bool",
 	is  => "rw",
