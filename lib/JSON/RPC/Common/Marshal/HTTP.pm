@@ -7,6 +7,7 @@ use Carp qw(croak);
 
 use URI::QueryParam;
 use MIME::Base64 ();
+use HTTP::Response;
 
 use namespace::clean -except => [qw(meta)];
 
