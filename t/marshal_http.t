@@ -159,6 +159,8 @@ use ok 'JSON::RPC::Common::Marshal::HTTP';
 
 	ok( !utf8::is_utf8($re_http_res->content), "body is not unicode (encoded)" );
 
+	is( $re_http_res->content_length, length($re_http_res->content), "content length" );
+
 	ok( my $re_res = $m_http->response_to_result($re_http_res), "round trip result" );
 
 	ok( utf8::is_utf8($re_res->result), "unicode decoded" );

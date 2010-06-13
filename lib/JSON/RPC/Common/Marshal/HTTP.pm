@@ -429,21 +429,26 @@ sub result_to_response {
 sub create_http_response {
 	my ( $self, %args ) = @_;
 
+	my ( $body, $status ) = delete @args{qw(body status)};
+
 	HTTP::Response->new(
-		$args{status},
+		$status,
 		undef,
-		HTTP::Headers->new( Content_Type => $args{content_type} ),
-		$args{body},
+		HTTP::Headers->new(%args),
+		$body,
 	);
 }
 
 sub result_to_response_params {
 	my ( $self, $result ) = @_;
 
+	my $body = $self->encode($result->deflate);
+
 	return (
-		status       => ( $result->has_error ? $result->error->http_status : 200 ),
-		content_type => $self->get_content_type($result),
-		body         => $self->encode($result->deflate),
+		status         => ( $result->has_error ? $result->error->http_status : 200 ),
+		Content_Type   => $self->get_content_type($result),
+		Content_Length => length($body), # http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#ResponseHeaders
+		body           => $body,
 	);
 }
 
