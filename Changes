@@ -1,3 +1,7 @@
+0.07
+		- Fix deflation of 1.0 results (which require "error":null)
+		- Always provide Content-Length in HTTP responses
+
 0.06
 		- Encode/decode UTF8 automatically in the HTTP marshal
 
