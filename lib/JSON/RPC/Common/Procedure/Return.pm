@@ -16,8 +16,8 @@ around new_from_data => sub {
 	my $next = shift;
 	my ( $class, %args ) = @_;
 
-	if ( exists $args{error} ) {
-		$args{error} = $class->inflate_error(delete $args{error}, %args);
+	if ( defined(my $error = delete $args{error}) ) {
+		$args{error} = $class->inflate_error($error, %args);
 	}
 
 	return $class->$next(%args);

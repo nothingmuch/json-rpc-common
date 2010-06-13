@@ -39,6 +39,13 @@ use ok 'JSON::RPC::Common::Procedure::Call';
 	isa_ok( $res, "JSON::RPC::Common::Procedure::Return::Version_1_0" );
 
 	is_deeply( $res->deflate, { result => "moose", error => undef, id => "foo" }, "deflated" );
+
+	my $res_passthrough = JSON::RPC::Common::Procedure::Return->inflate($res->deflate);
+
+	isa_ok( $res_passthrough, "JSON::RPC::Common::Procedure::Return", "reinflate result" );
+	ok( !$res_passthrough->has_error, "no error" );
+	is( $res->id, "foo", "ID" );
+	is( $res->result, "moose", "result" );
 }
 
 {
