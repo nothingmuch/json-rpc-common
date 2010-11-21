@@ -5,6 +5,7 @@ use Moose;
 
 use Carp qw(croak);
 
+use Try::Tiny;
 use URI::QueryParam;
 use MIME::Base64 ();
 use HTTP::Response;
@@ -299,7 +300,7 @@ sub encoded_uri_to_call {
 
 	for my $params ( $rpc{params} ) {
 		# try as unencoded JSON first
-		if ( my $data = do { local $@; eval { $self->decode($params) } } ) {
+		if ( my $data = try { $self->decode($params) } ) {
 			$params = $data;
 		} else {
 			my $json = $self->decode_base64($params) || croak "params are not Base64 encoded";

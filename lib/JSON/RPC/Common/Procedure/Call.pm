@@ -3,6 +3,7 @@
 package JSON::RPC::Common::Procedure::Call;
 use Moose;
 
+use Try::Tiny;
 use JSON::RPC::Common::TypeConstraints qw(JSONValue);
 use JSON::RPC::Common::Procedure::Return;
 
@@ -114,14 +115,18 @@ sub call {
 
 	my $method = $self->method;
 
-	local $@;
+    my $error;
+	my @res = try {
+	    $invocant->$method( $self->params_list, @args )
+	} catch {
+	    $error = $_;
+	};
 
-	my @res = eval { $invocant->$method( $self->params_list, @args ) };
-
-	if ($@) {
-		$self->return_error(message => $@);
-	} else {
-		$self->return_result(@res);
+	if ($error) {
+	    $self->return_error(message => $error);
+	}
+	else {
+	    $self->return_result(@res);
 	}
 }
 
