@@ -21,6 +21,7 @@ WriteMakefile(
 		'HTTP::Request' => 0,
 		'URI::QueryParam' => 0,
 		'MIME::Base64' => 0,
+		'Try::Tiny' => 0,
 	},
 );
 
