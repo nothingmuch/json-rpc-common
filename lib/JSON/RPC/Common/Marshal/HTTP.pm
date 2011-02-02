@@ -382,7 +382,9 @@ sub write_result_to_response {
 		}
 	}
 
-	croak "BAH" if keys %args;
+	if (my @keys = keys %args) {
+		croak "Unhandled response params: " . join ' ', @keys;
+	}
 
 	return 1;
 }
