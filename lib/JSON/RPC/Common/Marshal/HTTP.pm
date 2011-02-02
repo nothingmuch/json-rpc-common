@@ -426,7 +426,7 @@ sub response_to_result_error {
 sub result_to_response {
 	my ( $self, $result ) = @_;
 
-	$self->create_http_response( $self->result_to_response_params($result) );
+	$self->create_http_response( $self->result_to_response_headers($result) );
 }
 
 sub create_http_response {
@@ -442,7 +442,7 @@ sub create_http_response {
 	);
 }
 
-sub result_to_response_params {
+sub result_to_response_headers {
 	my ( $self, $result ) = @_;
 
 	my $body = $self->encode($result->deflate);
@@ -453,6 +453,16 @@ sub result_to_response_params {
 		Content_Length => length($body), # http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#ResponseHeaders
 		body           => $body,
 	);
+}
+
+sub result_to_response_params {
+	my ( $self, $result ) = @_;
+
+	my %headers = $self->result_to_response_headers($result);
+	$headers{content_type} = delete $headers{Content_Type};
+	$headers{content_length} = delete $headers{Content_Length};
+
+	return %headers;
 }
 
 __PACKAGE__->meta->make_immutable();
