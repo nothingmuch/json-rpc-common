@@ -1,3 +1,6 @@
+{{$NEXT}}
+		- fix write_result_to_response
+
 0.08
 		- swap all evals for Try::Tiny
 
