@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Procedure::Call::Version_1_0;
 use Moose;
+# ABSTRACT: JSON-RPC 1.0 request
 
 use JSON::RPC::Common::Procedure::Return::Version_1_0;
 
@@ -50,13 +51,7 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Procedure::Call::Version_1_0 - JSON-RPC 1.0 request
 
 =head1 SYNOPSIS
 

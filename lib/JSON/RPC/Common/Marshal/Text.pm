@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Marshal::Text;
 use Moose;
+# ABSTRACT: JSON text marshalling for L<JSON::RPC::Common>.
 
 use Carp qw(croak);
 
@@ -95,14 +96,7 @@ __PACKAGE__->meta->make_immutable();
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Marshal::Text - JSON text marshalling for
-L<JSON::RPC::Common>.
 
 =head1 SYNOPSIS
 

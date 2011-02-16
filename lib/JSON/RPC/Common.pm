@@ -1,18 +1,11 @@
 #!/usr/bin/perl
 
 package JSON::RPC::Common;
-
-our $VERSION = "0.08";
+# ABSTRACT: Transport agnostic JSON RPC helper objects
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common - Transport agnostic JSON RPC helper objects
 
 =head1 SYNOPSIS
 
@@ -178,21 +171,4 @@ L<http://groups.google.com/group/json-rpc/web/json-rpc-over-http>
 
 L<JSON>, L<JSON::RPC>, L<RPC::JSON>, L<HTTP::Engine>, L<CGI::JSONRPC>
 
-=head1 VERSION CONTROL
-
-This module is maintained using Darcs. You can get the latest version from
-L<http://nothingmuch.woobling.org/code>, and use C<darcs send> to commit
-changes.
-
-=head1 AUTHOR
-
-Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
-
-=head1 COPYRIGHT
-
-	Copyright (c) 2008 Yuval Kogman. All rights reserved
-	This program is free software; you can redistribute
-	it and/or modify it under the same terms as Perl itself.
-
 =cut
-

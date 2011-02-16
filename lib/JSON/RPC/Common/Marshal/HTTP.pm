@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Marshal::HTTP;
 use Moose;
+# ABSTRACT: Convert L<HTTP::Request> and L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 use Carp qw(croak);
 
@@ -469,14 +470,7 @@ __PACKAGE__->meta->make_immutable();
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Marshal::HTTP - Convert L<HTTP::Request> and
-L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 =head1 SYNOPSIS
 

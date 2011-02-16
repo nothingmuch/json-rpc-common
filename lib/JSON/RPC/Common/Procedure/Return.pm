@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Procedure::Return;
 use Moose;
+# ABSTRACT: JSON-RPC procedure return class
 
 use Carp qw(croak);
 
@@ -98,13 +99,7 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Procedure::Return - JSON-RPC procedure return class
 
 =head1 SYNOPSIS
 

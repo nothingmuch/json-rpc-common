@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More 'no_plan';
 
-use ok 'JSON::RPC::Common::Procedure::Call';
+use JSON::RPC::Common::Procedure::Call;
 
 {
 	my $req_data = {

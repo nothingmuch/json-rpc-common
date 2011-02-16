@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Procedure::Call::Version_1_1;
 use Moose;
+# ABSTRACT: JSON-RPC 1.1 Procedure Call
 
 use MRO::Compat;
 
@@ -93,13 +94,7 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Procedure::Call::Version_1_1 - JSON-RPC 1.1 Procedure Call
 
 =head1 SYNOPSIS
 

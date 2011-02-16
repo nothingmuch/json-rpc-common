@@ -9,7 +9,7 @@ use Test::Exception;
 
 use JSON;
 
-use ok 'JSON::RPC::Common::Marshal::Text';
+use JSON::RPC::Common::Marshal::Text;
 
 {
 	my $m_json = JSON::RPC::Common::Marshal::Text->new;
