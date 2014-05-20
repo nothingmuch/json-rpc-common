@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Procedure::Return::Version_2_0::Error;
 use Moose;
+# ABSTRACT: JSON-RPC 2.0 error class.
 
 use JSON::RPC::Common::TypeConstraints qw(JSONValue);
 
@@ -31,14 +32,7 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Procedure::Return::Version_2_0::Error - JSON-RPC 2.0 error
-class.
 
 =head1 SYNOPSIS
 

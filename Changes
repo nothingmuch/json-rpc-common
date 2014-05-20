@@ -1,3 +1,11 @@
+{{$NEXT}}
+
+0.10  2011-02-16
+		- bump dep on n::c
+
+0.09  2011-02-16
+		- fix write_result_to_response
+
 0.08
 		- swap all evals for Try::Tiny
 

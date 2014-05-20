@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Marshal::HTTP;
 use Moose;
+# ABSTRACT: Convert L<HTTP::Request> and L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 use Carp qw(croak);
 
@@ -382,7 +383,9 @@ sub write_result_to_response {
 		}
 	}
 
-	croak "BAH" if keys %args;
+	if (my @keys = keys %args) {
+		croak "Unhandled response params: " . join ' ', @keys;
+	}
 
 	return 1;
 }
@@ -424,7 +427,7 @@ sub response_to_result_error {
 sub result_to_response {
 	my ( $self, $result ) = @_;
 
-	$self->create_http_response( $self->result_to_response_params($result) );
+	$self->create_http_response( $self->result_to_response_headers($result) );
 }
 
 sub create_http_response {
@@ -440,7 +443,7 @@ sub create_http_response {
 	);
 }
 
-sub result_to_response_params {
+sub result_to_response_headers {
 	my ( $self, $result ) = @_;
 
 	my $body = $self->encode($result->deflate);
@@ -453,18 +456,21 @@ sub result_to_response_params {
 	);
 }
 
+sub result_to_response_params {
+	my ( $self, $result ) = @_;
+
+	my %headers = $self->result_to_response_headers($result);
+	$headers{content_type} = delete $headers{Content_Type};
+	$headers{content_length} = delete $headers{Content_Length};
+
+	return %headers;
+}
+
 __PACKAGE__->meta->make_immutable();
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Marshal::HTTP - Convert L<HTTP::Request> and
-L<HTTP::Response> to/from L<JSON::RPC::Common> calls and returns.
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 package JSON::RPC::Common::TypeConstraints;
+# ABSTRACT: Type constraint library
 
 use strict;
 use warnings;
@@ -16,13 +17,7 @@ subtype JSONContainer, as ArrayRef|HashRef;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::TypeConstraints - Type constraint library
 
 =head1 SYNOPSIS
 

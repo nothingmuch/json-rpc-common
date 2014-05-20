@@ -16,7 +16,7 @@ BEGIN {
 
 use MIME::Base64 qw(encode_base64);
 
-use ok 'JSON::RPC::Common::Marshal::HTTP';
+use JSON::RPC::Common::Marshal::HTTP;
 
 {
 	my $m_http = JSON::RPC::Common::Marshal::HTTP->new;

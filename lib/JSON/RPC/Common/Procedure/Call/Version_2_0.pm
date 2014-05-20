@@ -2,6 +2,7 @@
 
 package JSON::RPC::Common::Procedure::Call::Version_2_0;
 use Moose;
+# ABSTRACT: JSON-RPC 2.0 Procedure Call
 
 use JSON::RPC::Common::TypeConstraints qw(JSONContainer);
 use JSON::RPC::Common::Procedure::Return::Version_2_0;
@@ -37,13 +38,7 @@ __PACKAGE__->meta->make_immutable;
 
 __PACKAGE__
 
-__END__
-
 =pod
-
-=head1 NAME
-
-JSON::RPC::Common::Procedure::Call::Version_2_0 - JSON-RPC 2.0 Procedure Call
 
 =head1 SYNOPSIS
 
